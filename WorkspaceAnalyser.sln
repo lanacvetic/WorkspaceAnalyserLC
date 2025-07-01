@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkspaceAnalyser", "WorkspaceAnalyser\WorkspaceAnalyser.csproj", "{37142E93-5B37-430C-A2BC-A65C49AA619A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkspaceConsole", "WorkspaceConsole\WorkspaceConsole.csproj", "{7494B381-CC0A-44FA-A517-659EA5C0115D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkspaceDropdown", "WorkspaceDropdown\WorkspaceDropdown.csproj", "{8484AB04-151E-4D66-B66A-B6C66FE0572A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37142E93-5B37-430C-A2BC-A65C49AA619A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37142E93-5B37-430C-A2BC-A65C49AA619A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37142E93-5B37-430C-A2BC-A65C49AA619A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37142E93-5B37-430C-A2BC-A65C49AA619A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7494B381-CC0A-44FA-A517-659EA5C0115D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7494B381-CC0A-44FA-A517-659EA5C0115D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7494B381-CC0A-44FA-A517-659EA5C0115D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7494B381-CC0A-44FA-A517-659EA5C0115D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8484AB04-151E-4D66-B66A-B6C66FE0572A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8484AB04-151E-4D66-B66A-B6C66FE0572A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8484AB04-151E-4D66-B66A-B6C66FE0572A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8484AB04-151E-4D66-B66A-B6C66FE0572A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

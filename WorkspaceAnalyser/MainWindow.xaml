@@ -1,0 +1,45 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Projektanalyse" Height="700" Width="1000"
+        Background="#FAFAFA"
+        FontFamily="Segoe UI" FontSize="14">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" >
+
+            <!-- Title -->
+            <TextBlock Text="Projektanalyse Tool" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2E3A59"/>
+
+            <!-- Root Path Input Section -->
+            <Border Background="#F0F0F0" Padding="15" CornerRadius="10" Margin="0,0,0,15">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBox x:Name="RootPathTextBox" Width="600"
+                             Text="C:\Users\lcvetic\Documents\Workspace"
+                             Margin="0,0,10,0"
+                             KeyDown="RootPathTextBox_KeyDown"/>
+                    <Button x:Name="StartAnalysisButton"
+                            Content="Analyse starten"
+                            Width="150"
+                            Height="30"
+                            Background="#007ACC"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Sorting Option -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                <TextBlock Text="Sortierreihenfolge:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox x:Name="SortOrderCombo" Width="200">
+                    <ComboBoxItem Content="Größte zuerst" IsSelected="True"/>
+                    <ComboBoxItem Content="Kleinste zuerst"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Output Section -->
+            <StackPanel x:Name="ProjectsPanel" Margin="0,10,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
