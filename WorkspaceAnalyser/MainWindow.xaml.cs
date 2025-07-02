@@ -9,345 +9,367 @@ using System.Windows.Input;
 
 namespace WpfApp;
 
+public class ProjectNode
+{
+    public string Display => $"{Path}: {FormattedSize}";
+    public string Path { get; set; }
+    public string FormattedSize { get; set; }
+    public List<UstNode> Usts { get; set; } = new();
+}
+
+public class UstNode
+{
+    public string Display => $"{Path}: {FormattedSize} ({Percentage:0.##}%)";
+    public string Path { get; set; }
+    public string FormattedSize { get; set; }
+    public double Percentage { get; set; }
+}
+
 /// <summary>
 /// Interaktionslogik für MainWindow.xaml.
 /// Diese Klasse verwaltet die Hauptlogik der WPF-Anwendung zur Analyse von Plattengrößen.
 /// </summary>
 public partial class MainWindow : Window
 {
-    // Basis-Pfad für die Analyse. Beachten Sie, dass dieser statisch ist und im Konstruktor nicht direkt verwendet wird,
-    // stattdessen wird der Pfad aus dem 'RootPathTextBox' der UI gelesen. Der Kommentar wurde entsprechend aktualisiert.
-    private static readonly string rootPath = "C:\\Users\\lcvetic\\Documents\\Workspace";
+    // Consider making this configurable via settings or a user input for flexibility.
+    // As it stands, it's a hardcoded default that is overridden by UI input.
+    // private static readonly string DefaultRootPath = "C:\\Users\\lcvetic\\Documents\\Workspace";
 
     /// <summary>
-    /// Konstruktor der MainWindow-Klasse.
-    /// Initialisiert die UI-Komponenten und abonniert den Klick-Event des Start-Buttons.
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
+    /// Sets up UI components and subscribes to the Start Analysis button click event.
     /// </summary>
     public MainWindow()
     {
-        InitializeComponent(); // Initialisiert die in XAML definierten WPF-Komponenten.
-        // Abonniert den Klick-Event des 'StartAnalysisButton' mit der Methode 'StartAnalysis_Click'.
+        InitializeComponent();
+        // Event handlers can be assigned directly in XAML (e.g., Click="StartAnalysis_Click")
+        // for better separation of concerns, but programmatic assignment is also valid.
         StartAnalysisButton.Click += StartAnalysis_Click;
+
+        // Initialize ComboBox selection if not set in XAML
+        if (SortierungComboBox.SelectedItem == null && SortierungComboBox.Items.Count > 0)
+        {
+            SortierungComboBox.SelectedIndex = 0; // Select the first item by default
+        }
     }
+
+    /// <summary>
+    /// Handles the KeyDown event for the RootPathTextBox, triggering analysis on Enter key press.
+    /// </summary>
     private void RootPathTextBox_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
+            // Simulate a button click
             StartAnalysis_Click(StartAnalysisButton, new RoutedEventArgs());
         }
     }
+    
+
     /// <summary>
-    /// Event-Handler für den "Analyse starten"-Button.
-    /// Führt die Plattengrößenanalyse basierend auf dem eingegebenen Pfad aus und zeigt die Ergebnisse an.
+    /// Event handler for the "Start Analysis" button.
+    /// Performs disk size analysis based on the entered path and displays the results.
     /// </summary>
     private void StartAnalysis_Click(object sender, RoutedEventArgs e)
     {
-        // Löscht alle vorhandenen UI-Elemente aus dem ProjectsPanel, um die Anzeige zu aktualisieren.
-        ProjectsPanel.Children.Clear();
+        ProjectsTreeView.Items.Clear(); // Clear previous results
 
-        // Holt den eingegebenen Pfad aus der Textbox und entfernt führende/nachfolgende Leerzeichen.
         string inputPath = RootPathTextBox.Text.Trim();
 
-        // Überprüft, ob der eingegebene Pfad existiert. Wenn nicht, wird eine Fehlermeldung angezeigt.
-        if (!Directory.Exists(inputPath))
+        if (string.IsNullOrWhiteSpace(inputPath) || !Directory.Exists(inputPath))
         {
-            MessageBox.Show("Der eingegebene Pfad existiert nicht!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-            return; // Beendet die Methode, wenn der Pfad ungültig ist.
+            MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            return;
         }
 
-        // Überprüft, ob der eingegebene Pfad selbst ein Projekt ist (enthält prj.xml).
-        if (IsProject(inputPath))
+        // Determine sorting preference
+        bool sortAscending = (SortierungComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Kleinste zuerst";
+
+        if (DiskAnalyzer.IsProject(inputPath))
         {
-            // Wenn der Input-Pfad ein Projekt ist, wird nur dieses eine Projekt angezeigt.
-            DisplaySingleProject(inputPath, inputPath);
+            // If the input path is a project, display only this project.
+            DisplaySingleProject(inputPath, inputPath, sortAscending);
         }
         else
         {
-            // Wenn der Input-Pfad kein Projekt ist, wird versucht, das nächste Projekt-Wurzelverzeichnis zu finden.
-            string prjRoot = FindNearestProjectRoot(inputPath);
+            // If the input path is not a project, try to find the nearest project root.
+            string prjRoot = DiskAnalyzer.FindNearestProjectRoot(inputPath);
 
-            // Überprüft, ob ein Projekt-Wurzelverzeichnis gefunden wurde und es nicht der Input-Pfad selbst ist.
-            if (prjRoot != null && prjRoot != inputPath)
+            if (prjRoot != null && prjRoot.Equals(inputPath, StringComparison.OrdinalIgnoreCase))
             {
-                // Wenn wir uns tief innerhalb eines einzelnen Projekts befinden, zeige dieses Projekt an.
-                DisplaySingleProject(prjRoot, inputPath);
+                // The input path itself is the nearest project root.
+                DisplaySingleProject(prjRoot, inputPath, sortAscending);
+            }
+            else if (prjRoot != null)
+            {
+                // We are deep within a single project, display this project.
+                DisplaySingleProject(prjRoot, inputPath, sortAscending);
             }
             else
             {
-                // Wenn wir auf einer Ebene sind, die mehrere mögliche Projektordner enthält (oder gar keine).
-                // Holt alle Projektpfade, die im eingegebenen Pfad oder seinen Unterverzeichnissen gefunden wurden.
-                var allPrjPaths = GetAllProjectPaths(inputPath);
+                // If no nearest project root found, or it's not the input path itself,
+                // assume we are at a level that might contain multiple project folders.
+                var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(inputPath);
 
-                // Wenn keine Projekte gefunden wurden, zeige eine Warnmeldung an.
-                if (allPrjPaths.Count == 0)
+                if (!allPrjPaths.Any())
                 {
-                    MessageBox.Show("Kein gültiges Projekt (prj.xml) im Pfad gefunden!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return; // Beendet die Methode.
+                    MessageBox.Show("No valid project (prj.xml) found in the path!", "Error", MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
                 }
 
-                // Durchläuft alle gefundenen Projektpfade und zeigt jedes einzelne Projekt an.
-                foreach (var prj in allPrjPaths)
+                // Calculate sizes once and then sort
+                var projectSizes = allPrjPaths
+                    .Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) })
+                    .ToList();
+
+                projectSizes = sortAscending
+                    ? projectSizes.OrderBy(p => p.Size).ToList()
+                    : projectSizes.OrderByDescending(p => p.Size).ToList();
+
+                // Display projects in sorted order
+                foreach (var prj in projectSizes)
                 {
-                    DisplaySingleProject(prj, prj);
+                    DisplaySingleProject(prj.Path, prj.Path, sortAscending);
                 }
             }
         }
     }
 
     /// <summary>
-    /// Zeigt die Details eines einzelnen Projekts und seiner UST-Kategorien in der Benutzeroberfläche an.
+    /// Displays the details of a single project and its UST categories in the UI.
     /// </summary>
-    /// <param name="prjRoot">Der Wurzelpfad des Projekts (dort wo prj.xml liegt).</param>
-    /// <param name="focusPath">Der Pfad, der vom Benutzer eingegeben wurde und auf den die USTs gefiltert werden sollen.</param>
-    private void DisplaySingleProject(string prjRoot, string focusPath)
+    /// <param name="projectRoot">The root path of the project (where prj.xml is located).</param>
+    /// <param name="focusPath">The path entered by the user, used to filter USTs.</param>
+    /// <param name="sortAscending">True to sort USTs in ascending order by size, false for descending.</param>
+    private void DisplaySingleProject(string projectRoot, string focusPath, bool sortAscending)
     {
-        // Berechnet die Gesamtgröße des Projekts.
-        double prjSize = GetDiskSize(prjRoot);
-        // Formatiert die Projektgröße für die Anzeige (z.B. in MB oder GB).
-        string prjOutput = FormatSize(prjSize);
+        double projectSize = DiskAnalyzer.GetDiskSize(projectRoot);
+        string formattedProjectSize = DiskAnalyzer.FormatSize(projectSize);
 
-        // Erstellt ein vertikales StackPanel, um die UI-Elemente für das aktuelle Projekt zu organisieren.
-        var prjPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 10) };
-
-        // Fügt einen TextBlock hinzu, der den Pfad und die Gesamtgröße des Projekts anzeigt.
-        prjPanel.Children.Add(new TextBlock
-        {
-            Text = $"{prjRoot}: {prjOutput}",
-            FontWeight = FontWeights.Bold, // Setzt den Text auf fett.
-            TextWrapping = TextWrapping.Wrap, // Ermöglicht den Zeilenumbruch.
-            Foreground = Brushes.Black // Setzt die Textfarbe auf Schwarz.
-        });
-
-        // Holt alle UST-Pfade im gesamten Unterbaum des Projekts.
-        var allUsts = GetAllUstPathsUnderSubtree(prjRoot);
-        // Filtert die UST-Pfade basierend auf dem 'focusPath'.
-        // Es werden nur USTs angezeigt, die den Fokuspfad enthalten oder vom Fokuspfad enthalten sind.
-        var ustPaths = allUsts
-            .Where(p => focusPath.StartsWith(p, StringComparison.OrdinalIgnoreCase) || 
+        var allUsts = DiskAnalyzer.GetAllUstPathsUnderSubtree(projectRoot);
+        var relevantUsts = allUsts
+            .Where(p => focusPath.StartsWith(p, StringComparison.OrdinalIgnoreCase) ||
                         p.StartsWith(focusPath, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        // Bestimmt die Sortierreihenfolge (aufsteigend oder absteigend) aus der ComboBox.
-        string selectedSort = (SortOrderCombo.SelectedItem as ComboBoxItem)?.Content?.ToString();
-        bool sortAscending = selectedSort == "Kleinste zuerst";
+        relevantUsts = sortAscending
+            ? relevantUsts.OrderBy(DiskAnalyzer.GetDiskSize).ToList()
+            : relevantUsts.OrderByDescending(DiskAnalyzer.GetDiskSize).ToList();
 
-        // Sortiert die gefundenen UST-Pfade basierend auf ihrer Größe und der ausgewählten Reihenfolge.
-        ustPaths = sortAscending
-            ? ustPaths.OrderBy(p => GetDiskSize(p)).ToList() // Sortiert aufsteigend nach Größe.
-            : ustPaths.OrderByDescending(p => GetDiskSize(p)).ToList(); // Sortiert absteigend nach Größe.
-
-        // Überprüft, ob UST-Kategorien gefunden wurden, bevor UI-Elemente dafür erstellt werden.
-        if (ustPaths.Count > 0)
+        var projectNode = new ProjectNode
         {
-            // Durchläuft jede gefilterte und sortierte UST-Kategorie.
-            foreach (var ustPath in ustPaths)
+            Path = projectRoot,
+            FormattedSize = formattedProjectSize,
+            Usts = relevantUsts.Select(ustPath =>
             {
-                // Berechnet die Größe der aktuellen UST-Kategorie.
-                double ustSize = GetDiskSize(ustPath);
-                // Berechnet den prozentualen Anteil der UST-Kategorie an der Gesamtgröße des Projekts.
-                double ustPercent = GetPercentage(ustSize, prjSize);
-                // Formatiert die UST-Größe für die Anzeige.
-                string ustOutput = FormatSize(ustSize);
-
-                // Bestimmt die Textfarbe basierend auf dem prozentualen Anteil der UST-Kategorie.
-                // Grün für < 33%, Orange für 33-66%, Rot für > 66%.
-                Brush ustColor = ustPercent switch
+                double ustSize = DiskAnalyzer.GetDiskSize(ustPath);
+                double percent = DiskAnalyzer.GetPercentage(ustSize, projectSize);
+                return new UstNode
                 {
-                    < 33 => Brushes.Green,
-                    < 66 => Brushes.Orange,
-                    _ => Brushes.Red
+                    Path = ustPath,
+                    FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+                    Percentage = percent
                 };
+            }).ToList()
+        };
 
-                // Fügt einen TextBlock für jede UST-Kategorie zum Projekt-Panel hinzu.
-                prjPanel.Children.Add(new TextBlock
-                {
-                    Text = $"{ustPath}: {ustOutput} ({ustPercent:0.##}%)",
-                    Margin = new Thickness(10, 2, 0, 2), // Setzt einen kleinen linken Abstand für Einrückung.
-                    Foreground = ustColor, // Setzt die Farbe des TextBlocks.
-                    FontStyle = FontStyles.Italic // Setzt den Text auf kursiv.
-                });
-            }
-        }
-        else
-        {
-            // Wenn keine UST-Kategorien gefunden wurden, fügt einen entsprechenden Hinweistext hinzu.
-            prjPanel.Children.Add(new TextBlock
-            {
-                Text = "Keine ust.xml Ordner unter diesem Pfad gefunden.",
-                Margin = new Thickness(10, 5, 0, 5),
-                Foreground = Brushes.Gray // Setzt die Textfarbe auf Grau.
-            });
-        }
-
-        // Fügt das gesamte Projekt-Panel dem Haupt-Panel in der UI hinzu.
-        ProjectsPanel.Children.Add(prjPanel);
+        ProjectsTreeView.Items.Add(projectNode);
     }
 
     /// <summary>
-    /// Findet rekursiv alle UST-Kategoriepfade unterhalb eines gegebenen Wurzelverzeichnisses.
-    /// Eine UST-Kategorie wird durch das Vorhandensein einer 'ust.xml' Datei im Ordner identifiziert.
+    /// Determines the text color for a UST category based on its percentage of the total project size.
     /// </summary>
-    /// <param name="root">Der Pfad, ab dem die Suche gestartet werden soll.</param>
-    /// <returns>Eine Liste von Strings, die die Pfade zu allen gefundenen UST-Kategorien enthalten.</returns>
-    private static List<string> GetAllUstPathsUnderSubtree(string root)
+    /// <param name="ustPercent">The percentage of the UST category size relative to the project size.</param>
+    /// <returns>A <see cref="Brush"/> representing the color.</returns>
+    private static Brush GetUstCategoryColor(double ustPercent)
     {
-        var list = new List<string>(); // Initialisiert eine leere Liste zum Speichern der UST-Pfade.
+        return ustPercent switch
+        {
+            < 33 => Brushes.Green,
+            < 66 => Brushes.Orange,
+            _ => Brushes.Red
+        };
+    }
 
+    /// <summary>
+    /// Handles the SelectionChanged event for the SortierungComboBox, re-running analysis.
+    /// </summary>
+    private void SortierungComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // Only trigger analysis if the root path text box has content,
+        // preventing unnecessary runs on initial load or empty input.
+        if (!string.IsNullOrWhiteSpace(RootPathTextBox.Text))
+        {
+            StartAnalysis_Click(StartAnalysisButton, new RoutedEventArgs());
+        }
+    }
+}
+
+/// <summary>
+/// A static helper class for disk analysis operations, promoting better separation of concerns.
+/// </summary>
+public static class DiskAnalyzer
+{
+    /// <summary>
+    /// Recursively finds all UST category paths under a given root directory.
+    /// A UST category is identified by the presence of a 'ust.xml' file in the folder.
+    /// </summary>
+    /// <param name="root">The path from which to start the search.</param>
+    /// <returns>A list of strings containing the paths to all found UST categories.</returns>
+    public static List<string> GetAllUstPathsUnderSubtree(string root)
+    {
+        var ustPaths = new List<string>();
         try
         {
-            // Durchläuft alle direkten Unterverzeichnisse des aktuellen Root-Pfades.
             foreach (var dir in Directory.EnumerateDirectories(root))
             {
-                // Überprüft, ob das aktuelle Verzeichnis eine UST-Kategorie ist.
                 if (IsUstCategory(dir))
-                    list.Add(dir); // Fügt den Pfad hinzu, wenn es eine UST-Kategorie ist.
-
-                // Rekursiver Aufruf, um auch die Unterverzeichnisse der Unterverzeichnisse zu durchsuchen.
-                list.AddRange(GetAllUstPathsUnderSubtree(dir));
+                {
+                    ustPaths.Add(dir);
+                }
+                // Recursively search subdirectories
+                ustPaths.AddRange(GetAllUstPathsUnderSubtree(dir));
             }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            // Log specific access denied errors if needed, otherwise just skip
+            Console.WriteLine($"Access denied to directory '{root}': {ex.Message}");
         }
         catch (Exception ex)
         {
-            // Eine leere Catch-Anweisung ist hier vorhanden, um Fehler wie fehlende Berechtigungen
-            // beim Zugriff auf Verzeichnisse zu ignorieren und die Anwendung nicht abstürzen zu lassen.
-            // Für eine robustere Anwendung wäre hier eine Fehlerprotokollierung empfehlenswert.
-            Console.WriteLine($"Fehler beim Zugriff auf Verzeichnis '{root}': {ex.Message}");
+            // General error logging
+            Console.WriteLine($"Error accessing directory '{root}': {ex.Message}");
         }
-
-        return list; // Gibt die Liste der gefundenen UST-Pfade zurück.
+        return ustPaths;
     }
 
     /// <summary>
-    /// Findet den nächstgelegenen übergeordneten Projekt-Wurzelpfad relativ zu einem gegebenen Pfad.
-    /// Ein Projekt-Wurzelpfad ist ein Verzeichnis, das eine 'prj.xml' Datei enthält.
+    /// Finds the nearest parent project root path relative to a given path.
+    /// A project root path is a directory that contains a 'prj.xml' file.
     /// </summary>
-    /// <param name="path">Der Startpfad, ab dem aufwärts gesucht werden soll.</param>
-    /// <returns>Den vollständigen Pfad des nächstgelegenen Projekt-Wurzelverzeichnisses, oder null, wenn keines gefunden wird.</returns>
-    static string FindNearestProjectRoot(string path)
+    /// <param name="path">The starting path from which to search upwards.</param>
+    /// <returns>The full path of the nearest project root directory, or null if none is found.</returns>
+    public static string FindNearestProjectRoot(string path)
     {
-        var dir = new DirectoryInfo(path); // Erstellt ein DirectoryInfo-Objekt für den Startpfad.
-
-        // Solange das aktuelle Verzeichnis existiert (nicht null ist).
+        var dir = new DirectoryInfo(path);
         while (dir != null)
         {
-            // Überprüft, ob das aktuelle Verzeichnis ein Projekt ist.
             if (IsProject(dir.FullName))
-                return dir.FullName; // Wenn ja, gib den vollständigen Pfad zurück.
-
-            dir = dir.Parent; // Gehe zum übergeordneten Verzeichnis und wiederhole die Schleife.
+            {
+                return dir.FullName;
+            }
+            dir = dir.Parent;
         }
-
-        return null; // Wenn kein Projekt-Wurzelverzeichnis gefunden wurde, gib null zurück.
+        return null;
     }
 
     /// <summary>
-    /// Berechnet die Gesamtgröße aller Dateien in einem Verzeichnis (inkl. Unterverzeichnisse).
+    /// Calculates the total size of all files in a directory (including subdirectories).
     /// </summary>
-    /// <param name="path">Pfad des zu analysierenden Verzeichnisses.</param>
-    /// <returns>Gesamtgröße in Bytes als double, oder 0 bei Fehlern (z.B. Zugriff verweigert).</returns>
-    static double GetDiskSize(string path)
+    /// <param name="path">Path of the directory to analyze.</param>
+    /// <returns>Total size in bytes as double, or 0 on errors (e.g., access denied).</returns>
+    public static double GetDiskSize(string path)
     {
         try
         {
-            // Erstellt ein DirectoryInfo-Objekt für den angegebenen Pfad.
+            // Use long for file lengths to avoid potential overflow with very large files
             return new DirectoryInfo(path)
-                // Zählt alle Dateien im Verzeichnis und seinen Unterverzeichnissen auf.
                 .EnumerateFiles("*", SearchOption.AllDirectories)
-                // Summiert die Längen (Größen in Bytes) aller gefundenen Dateien.
                 .Sum(fi => (double)fi.Length);
         }
-        catch
+        catch (UnauthorizedAccessException)
         {
-            // Eine leere Catch-Anweisung ist hier vorhanden, um Fehler wie fehlende Berechtigungen
-            // beim Zugriff auf Verzeichnisse zu ignorieren und 0 zurückzugeben.
-            // Für eine robustere Anwendung wäre hier eine Fehlerprotokollierung empfehlenswert.
+            // Silently ignore access denied errors and return 0
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error calculating disk size for '{path}': {ex.Message}");
             return 0;
         }
     }
 
     /// <summary>
-    /// Formatiert eine Byte-Größe in lesbare Einheiten (B, KB, MB, GB).
+    /// Formats a byte size into human-readable units (B, KB, MB, GB).
     /// </summary>
-    /// <param name="size">Größe in Bytes (double).</param>
-    /// <returns>Formatierter String (z.B. "1.5 MB").</returns>
-    static string FormatSize(double size)
+    /// <param name="size">Size in bytes (double).</param>
+    /// <returns>Formatted string (e.g., "1.5 MB").</returns>
+    public static string FormatSize(double size)
     {
-        // Definiert die Konstanten für die Umrechnung von Bytes in größere Einheiten.
         const double KB = 1024;
         const double MB = KB * 1024;
         const double GB = MB * 1024;
 
-        // Nutzt ein Switch-Expression, um die Größe in die passende Einheit umzurechnen und zu formatieren.
         return size switch
         {
-            >= GB => $"{size / GB:0.##} GB", // Wenn Größe >= 1 GB, formatiere als GB (mit zwei Nachkommastellen).
-            >= MB => $"{size / MB:0.##} MB", // Wenn Größe >= 1 MB, formatiere als MB.
-            >= KB => $"{size / KB:0.##} KB", // Wenn Größe >= 1 KB, formatiere als KB.
-            _ => $"{size} B" // Standardfall: Größe bleibt in Bytes.
+            >= GB => $"{size / GB:0.##} GB",
+            >= MB => $"{size / MB:0.##} MB",
+            >= KB => $"{size / KB:0.##} KB",
+            _ => $"{size} B"
         };
     }
 
     /// <summary>
-    /// Berechnet den prozentualen Anteil einer Teilgröße an einer Gesamtgröße.
+    /// Calculates the percentage of a part size relative to a total size.
     /// </summary>
-    /// <param name="partSize">Die Größe des Teils (double).</param>
-    /// <param name="totalSize">Die Gesamtgröße (double).</param>
-    /// <returns>Der Prozentsatz (Wert von 0 bis 100), oder 0, wenn die Gesamtgröße 0 ist (um Division durch Null zu vermeiden).</returns>
-    static double GetPercentage(double partSize, double totalSize)
+    /// <param name="partSize">The size of the part (double).</param>
+    /// <param name="totalSize">The total size (double).</param>
+    /// <returns>The percentage (value from 0 to 100), or 0 if the total size is 0.</returns>
+    public static double GetPercentage(double partSize, double totalSize)
     {
-        // Vermeidet eine Division durch Null. Wenn die Gesamtgröße 0 ist, ist der Prozentsatz ebenfalls 0.
         return totalSize == 0 ? 0 : (partSize / totalSize) * 100.0;
     }
 
     /// <summary>
-    /// Prüft, ob ein Verzeichnis ein Projekt ist.
-    /// Ein Verzeichnis gilt als Projekt, wenn es die Datei 'prj.xml' enthält.
+    /// Checks if a directory is a project.
+    /// A directory is considered a project if it contains the file 'prj.xml'.
     /// </summary>
-    /// <param name="path">Pfad des zu prüfenden Verzeichnisses.</param>
-    /// <returns>True, wenn 'prj.xml' im angegebenen Pfad existiert, sonst False.</returns>
-    static bool IsProject(string path) =>
-        File.Exists(Path.Combine(path, "prj.xml")); // Prüft, ob die Datei 'prj.xml' im angegebenen Pfad existiert.
+    /// <param name="path">Path of the directory to check.</param>
+    /// <returns>True if 'prj.xml' exists in the specified path, otherwise False.</returns>
+    public static bool IsProject(string path) =>
+        File.Exists(Path.Combine(path, "prj.xml"));
 
     /// <summary>
-    /// Prüft, ob ein Verzeichnis eine UST-Kategorie ist.
-    /// Eine UST-Kategorie ist ein Ordner, der die Datei 'ust.xml' enthält.
+    /// Checks if a directory is a UST category.
+    /// A UST category is a folder that contains the file 'ust.xml'.
     /// </summary>
-    /// <param name="path">Pfad des zu prüfenden Verzeichnisses.</param>
-    /// <returns>True, wenn 'ust.xml' im angegebenen Pfad existiert, sonst False.</returns>
-    static bool IsUstCategory(string path) =>
-        File.Exists(Path.Combine(path, "ust.xml")); // Prüft, ob die Datei 'ust.xml' im angegebenen Pfad existiert.
+    /// <param name="path">Path of the directory to check.</param>
+    /// <returns>True if 'ust.xml' exists in the specified path, otherwise False.</returns>
+    public static bool IsUstCategory(string path) =>
+        File.Exists(Path.Combine(path, "ust.xml"));
 
     /// <summary>
-    /// Findet alle Projektpfade, indem es rekursiv alle Unterverzeichnisse ab einem Startpfad durchsucht.
-    /// Ein Verzeichnis wird als Projekt erkannt, wenn es die Datei 'prj.xml' enthält.
+    /// Finds all project paths by recursively searching all subdirectories from a starting path.
+    /// A directory is recognized as a project if it contains the file 'prj.xml'.
     /// </summary>
-    /// <param name="path">Der Startpfad für die Suche nach Projekten.</param>
-    /// <returns>Eine Liste von Strings, die die vollständigen Pfade zu allen gefundenen Projekten enthalten.</returns>
-    static List<string> GetAllProjectPaths(string path)
+    /// <param name="path">The starting path for the project search.</param>
+    /// <returns>A list of strings containing the full paths to all found projects.</returns>
+    public static List<string> GetAllProjectPaths(string path)
     {
-        var list = new List<string>(); // Initialisiert eine leere Liste zum Speichern der Projektpfade.
-
+        var projectPaths = new List<string>();
         try
         {
-            // Durchläuft alle direkten Unterverzeichnisse des aktuellen Pfads.
             foreach (var dir in Directory.EnumerateDirectories(path))
             {
-                // Überprüft, ob das aktuelle Verzeichnis ein Projekt ist.
-                if (IsProject(dir)) list.Add(dir); // Fügt den Pfad hinzu, wenn es ein Projekt ist.
-                // Rekursiver Aufruf, um auch die Unterverzeichnisse der Unterverzeichnisse zu durchsuchen.
-                list.AddRange(GetAllProjectPaths(dir));
+                if (IsProject(dir))
+                {
+                    projectPaths.Add(dir);
+                }
+                projectPaths.AddRange(GetAllProjectPaths(dir)); // Recursive call
             }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Console.WriteLine($"Access denied to directory '{path}': {ex.Message}");
         }
         catch (Exception ex)
         {
-            // Eine leere Catch-Anweisung ist hier vorhanden, um Fehler wie fehlende Berechtigungen
-            // beim Zugriff auf Verzeichnisse zu ignorieren und die Anwendung nicht abstürzen zu lassen.
-            // Für eine robustere Anwendung wäre hier eine Fehlerprotokollierung empfehlenswert.
-            Console.WriteLine($"Fehler beim Zugriff auf Verzeichnis '{path}': {ex.Message}");
+            Console.WriteLine($"Error accessing directory '{path}': {ex.Message}");
         }
-
-        return list; // Gibt die Liste der gefundenen Projektpfade zurück.
+        return projectPaths;
     }
-            //Wann man ENter druckt der triggert das Analysis Starten
-
 }
+
