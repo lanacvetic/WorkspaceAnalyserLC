@@ -54,36 +54,26 @@
                     <ComboBoxItem>Größte zuerst</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
-            
-            <!-- Pie Chart -->
-            
-            <Canvas>
-                <chartingToolkit:Chart
-                    Canvas.Top="80"
-                    Canvas.Left="10"
-                    Title="Experience"
-                    Name="mcChart"
-                    Width="400"
-                    Height="250"
-                    Background="PapayaWhip">
-                    <chartingToolkit:Chart.Series>
-                        <chartingToolkit:PieSeries
-                            ItemsSource="{Binding Items}"
-                            IndependentValueBinding="{Binding Name}"
-                            DependentValueBinding="{Binding Share}" />
-                    </chartingToolkit:Chart.Series>
-                </chartingToolkit:Chart>
-            </Canvas>
 
             <!-- Output Section -->
 
             <TreeView x:Name="ProjectsTreeView" Margin="0,10,0,0">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:ProjectNode}" ItemsSource="{Binding Usts}" >
-                        <TextBlock Text="{Binding Display}" FontWeight="Bold"  Foreground="{Binding TextColor}"/>
+                        <Button Content="{Binding Display}" 
+                                FontWeight="Bold"  
+                                Foreground="{Binding TextColor}"
+                                Background="Azure" 
+                                BorderThickness="0"
+                                Click="OpenFolderButton"/>
                     </HierarchicalDataTemplate>
                     <DataTemplate DataType="{x:Type local:UstNode}">
-                        <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}"/>
+                        <Button Content="{Binding Display}" 
+                                FontStyle="Italic" 
+                                Foreground="{Binding TextColor}" 
+                                Background="Azure" 
+                                BorderThickness="0"
+                                Click="OpenExplorerButton"/>
                     </DataTemplate>
                 </TreeView.Resources>
             </TreeView>
@@ -98,6 +88,5 @@
         <DataTemplate DataType="{x:Type local:UstNode}">
             <TextBlock Text="{Binding Display}" Foreground="{Binding TextColor}" />
         </DataTemplate>
-        <local:ItemCollection x:Key="ItemCollection" />
     </Window.Resources>
 </Window>

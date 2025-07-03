@@ -22,65 +22,20 @@ public class ProjectNode
 
 public class UstNode
 {
-    
     public string Display => $"{Path}: {FormattedSize} ({Percentage:0.##}%)";
-    
+
     public string Path { get; set; }
     public string FormattedSize { get; set; }
     public double Percentage { get; set; }
     public Brush TextColor { get; set; }
-    
 }
 
-public record Item(string Name, short Share);
-
-public class ItemCollection : Collection<Item>
-{
-    public ItemCollection() : base(new List<Item>
-    {
-        new("Mango", 10),
-        new("Banana", 36),
-        new("Apple", 24),
-        new("Guava", 4),
-        new("Orange", 12),
-        new("Pear", 10),
-        new("Pineapple", 4),
-    })
-    {
-    }
-}
 /// <summary>
 /// Interaktionslogik für MainWindow.xaml.
 /// Diese Klasse verwaltet die Hauptlogik der WPF-Anwendung zur Analyse von Plattengrößen.
 /// </summary>
 public partial class MainWindow : Window
 {
-    public Collection<Item> Items { get; set; } = new Collection<Item>()
-    {
-        new("Mango", 10),
-        new("Banana", 36),
-        new("Apple", 24),
-        new("Guava", 4),
-        new("Orange", 12),
-        new("Pear", 10),
-        new("Pineapple", 4),
-    };
-    private void LoadPieChartData()
-    {
-        var data = new[]
-        {
-            new KeyValuePair<string, int>("Project Manager", 12),
-            new KeyValuePair<string, int>("CEO", 25),
-            new KeyValuePair<string, int>("Software Engg.", 5),
-            new KeyValuePair<string, int>("Team Leader", 6),
-            new KeyValuePair<string, int>("Project Leader", 10),
-            new KeyValuePair<string, int>("Developer", 4)
-        };
-
-        var pieSeries = (PieSeries)mcChart.Series[0];
-        pieSeries.ItemsSource = data;
-    }
-    
     // Consider making this configurable via settings or a user input for flexibility.
     // As it stands, it's a hardcoded default that is overridden by UI input.
     // private static readonly string DefaultRootPath = "C:\\Users\\lcvetic\\Documents\\Workspace";
@@ -227,6 +182,25 @@ public partial class MainWindow : Window
             }
         }
     }
+    
+    
+    //Open explorer for the Contoller buttons function taken from the UI Button
+    public void OpenExplorerButton(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is UstNode ustNode)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", ustNode.Path);
+        }
+    }
+    
+    //Open explorer for the Project buttons function taken from the UI Button
+    public void OpenFolderButton(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is ProjectNode prjNode)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", prjNode.Path);
+        }
+    }
 
     /// <summary>
     /// Displays the details of a single project and its UST categories in the UI.
@@ -307,7 +281,7 @@ public partial class MainWindow : Window
         }
     }
 }
-
+    
 /// <summary>
 /// A static helper class for disk analysis operations, promoting better separation of concerns.
 /// </summary>
