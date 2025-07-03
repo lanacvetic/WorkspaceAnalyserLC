@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:WpfApp"
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit"
         Title="Projektanalyse" Height="700" Width="1000"
         Background="#FAFAFA"
         FontFamily="Segoe UI" FontSize="14">
@@ -16,6 +17,7 @@
             <TextBlock Text="Projektanalyse Tool" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"
                        Foreground="#2E3A59" />
 
+            <Label x:Name="DisplayNum" />
 
             <!-- Root Path Input Section -->
 
@@ -52,20 +54,50 @@
                     <ComboBoxItem>Größte zuerst</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
-
+            
+            <!-- Pie Chart -->
+            
+            <Canvas>
+                <chartingToolkit:Chart
+                    Canvas.Top="80"
+                    Canvas.Left="10"
+                    Title="Experience"
+                    Name="mcChart"
+                    Width="400"
+                    Height="250"
+                    Background="PapayaWhip">
+                    <chartingToolkit:Chart.Series>
+                        <chartingToolkit:PieSeries
+                            ItemsSource="{Binding Items}"
+                            IndependentValueBinding="{Binding Name}"
+                            DependentValueBinding="{Binding Share}" />
+                    </chartingToolkit:Chart.Series>
+                </chartingToolkit:Chart>
+            </Canvas>
 
             <!-- Output Section -->
 
             <TreeView x:Name="ProjectsTreeView" Margin="0,10,0,0">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:ProjectNode}" ItemsSource="{Binding Usts}">
-                        <TextBlock Text="{Binding Display}" FontWeight="Bold" />
+                    <HierarchicalDataTemplate DataType="{x:Type local:ProjectNode}" ItemsSource="{Binding Usts}" >
+                        <TextBlock Text="{Binding Display}" FontWeight="Bold"  Foreground="{Binding TextColor}"/>
                     </HierarchicalDataTemplate>
                     <DataTemplate DataType="{x:Type local:UstNode}">
-                        <TextBlock Text="{Binding Display}" FontStyle="Italic" />
+                        <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}"/>
                     </DataTemplate>
                 </TreeView.Resources>
             </TreeView>
         </StackPanel>
     </ScrollViewer>
+    
+    <Window.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type local:ProjectNode}" ItemsSource="{Binding Usts}">
+            <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="Black" />
+        </HierarchicalDataTemplate>
+
+        <DataTemplate DataType="{x:Type local:UstNode}">
+            <TextBlock Text="{Binding Display}" Foreground="{Binding TextColor}" />
+        </DataTemplate>
+        <local:ItemCollection x:Key="ItemCollection" />
+    </Window.Resources>
 </Window>

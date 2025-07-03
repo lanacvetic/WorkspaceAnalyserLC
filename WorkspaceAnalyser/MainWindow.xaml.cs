@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Media;
 using System.Windows.Input;
 
@@ -14,23 +16,71 @@ public class ProjectNode
     public string Display => $"{Path}: {FormattedSize}";
     public string Path { get; set; }
     public string FormattedSize { get; set; }
+    public Brush TextColor { get; set; }
     public List<UstNode> Usts { get; set; } = new();
 }
 
 public class UstNode
 {
+    
     public string Display => $"{Path}: {FormattedSize} ({Percentage:0.##}%)";
+    
     public string Path { get; set; }
     public string FormattedSize { get; set; }
     public double Percentage { get; set; }
+    public Brush TextColor { get; set; }
+    
 }
 
+public record Item(string Name, short Share);
+
+public class ItemCollection : Collection<Item>
+{
+    public ItemCollection() : base(new List<Item>
+    {
+        new("Mango", 10),
+        new("Banana", 36),
+        new("Apple", 24),
+        new("Guava", 4),
+        new("Orange", 12),
+        new("Pear", 10),
+        new("Pineapple", 4),
+    })
+    {
+    }
+}
 /// <summary>
 /// Interaktionslogik für MainWindow.xaml.
 /// Diese Klasse verwaltet die Hauptlogik der WPF-Anwendung zur Analyse von Plattengrößen.
 /// </summary>
 public partial class MainWindow : Window
 {
+    public Collection<Item> Items { get; set; } = new Collection<Item>()
+    {
+        new("Mango", 10),
+        new("Banana", 36),
+        new("Apple", 24),
+        new("Guava", 4),
+        new("Orange", 12),
+        new("Pear", 10),
+        new("Pineapple", 4),
+    };
+    private void LoadPieChartData()
+    {
+        var data = new[]
+        {
+            new KeyValuePair<string, int>("Project Manager", 12),
+            new KeyValuePair<string, int>("CEO", 25),
+            new KeyValuePair<string, int>("Software Engg.", 5),
+            new KeyValuePair<string, int>("Team Leader", 6),
+            new KeyValuePair<string, int>("Project Leader", 10),
+            new KeyValuePair<string, int>("Developer", 4)
+        };
+
+        var pieSeries = (PieSeries)mcChart.Series[0];
+        pieSeries.ItemsSource = data;
+    }
+    
     // Consider making this configurable via settings or a user input for flexibility.
     // As it stands, it's a hardcoded default that is overridden by UI input.
     // private static readonly string DefaultRootPath = "C:\\Users\\lcvetic\\Documents\\Workspace";
@@ -39,6 +89,32 @@ public partial class MainWindow : Window
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// Sets up UI components and subscribes to the Start Analysis button click event.
     /// </summary>
+    private double _workspaceSize = 0;
+    private int _projectNumber = 0;
+    private int _controllerNumber = 0;
+    public int PrjNumber
+    {
+        get => _projectNumber;
+        set
+        {
+            _projectNumber = value;
+            SetDisplayNumber();
+        }
+    }
+
+    public int UstNumber
+    {
+        get => _controllerNumber;
+        set
+        {
+            _controllerNumber = value;
+            SetDisplayNumber();
+        }
+    }
+    public string PrjDisplayNumber => $"Projekte: {PrjNumber} - Controller: {UstNumber}";
+    
+    
+        
     public MainWindow()
     {
         InitializeComponent();
@@ -51,6 +127,13 @@ public partial class MainWindow : Window
         {
             SortierungComboBox.SelectedIndex = 0; // Select the first item by default
         }
+        
+
+    }
+
+    private void SetDisplayNumber()
+    {
+        DisplayNum.Content = $"Projekte: {PrjNumber} | Controller: {UstNumber}";
     }
 
     /// <summary>
@@ -64,7 +147,7 @@ public partial class MainWindow : Window
             StartAnalysis_Click(StartAnalysisButton, new RoutedEventArgs());
         }
     }
-    
+
 
     /// <summary>
     /// Event handler for the "Start Analysis" button.
@@ -73,8 +156,11 @@ public partial class MainWindow : Window
     private void StartAnalysis_Click(object sender, RoutedEventArgs e)
     {
         ProjectsTreeView.Items.Clear(); // Clear previous results
+        PrjNumber = 0;
+        UstNumber = 0;
 
         string inputPath = RootPathTextBox.Text.Trim();
+        
 
         if (string.IsNullOrWhiteSpace(inputPath) || !Directory.Exists(inputPath))
         {
@@ -83,13 +169,17 @@ public partial class MainWindow : Window
             return;
         }
 
+        _workspaceSize = DiskAnalyzer.GetDiskSize(inputPath);
         // Determine sorting preference
-        bool sortAscending = (SortierungComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Kleinste zuerst";
+        bool sortAscending =
+            (SortierungComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Kleinste zuerst";
 
         if (DiskAnalyzer.IsProject(inputPath))
         {
+            
             // If the input path is a project, display only this project.
-            DisplaySingleProject(inputPath, inputPath, sortAscending);
+            DisplaySingleProject(inputPath, sortAscending);
+            
         }
         else
         {
@@ -99,18 +189,19 @@ public partial class MainWindow : Window
             if (prjRoot != null && prjRoot.Equals(inputPath, StringComparison.OrdinalIgnoreCase))
             {
                 // The input path itself is the nearest project root.
-                DisplaySingleProject(prjRoot, inputPath, sortAscending);
+                DisplaySingleProject( inputPath, sortAscending);
             }
             else if (prjRoot != null)
             {
                 // We are deep within a single project, display this project.
-                DisplaySingleProject(prjRoot, inputPath, sortAscending);
+                DisplaySingleProject(inputPath, sortAscending);
             }
             else
             {
                 // If no nearest project root found, or it's not the input path itself,
                 // assume we are at a level that might contain multiple project folders.
                 var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(inputPath);
+                
 
                 if (!allPrjPaths.Any())
                 {
@@ -123,7 +214,7 @@ public partial class MainWindow : Window
                 var projectSizes = allPrjPaths
                     .Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) })
                     .ToList();
-
+                //Fragezeichnen Teil???
                 projectSizes = sortAscending
                     ? projectSizes.OrderBy(p => p.Size).ToList()
                     : projectSizes.OrderByDescending(p => p.Size).ToList();
@@ -131,7 +222,7 @@ public partial class MainWindow : Window
                 // Display projects in sorted order
                 foreach (var prj in projectSizes)
                 {
-                    DisplaySingleProject(prj.Path, prj.Path, sortAscending);
+                    DisplaySingleProject(prj.Path, sortAscending);
                 }
             }
         }
@@ -141,17 +232,20 @@ public partial class MainWindow : Window
     /// Displays the details of a single project and its UST categories in the UI.
     /// </summary>
     /// <param name="projectRoot">The root path of the project (where prj.xml is located).</param>
-    /// <param name="focusPath">The path entered by the user, used to filter USTs.</param>
     /// <param name="sortAscending">True to sort USTs in ascending order by size, false for descending.</param>
-    private void DisplaySingleProject(string projectRoot, string focusPath, bool sortAscending)
+    private void DisplaySingleProject(string projectRoot, bool sortAscending)
     {
+        //Makes the conversion happen
         double projectSize = DiskAnalyzer.GetDiskSize(projectRoot);
         string formattedProjectSize = DiskAnalyzer.FormatSize(projectSize);
+        PrjNumber++;
 
         var allUsts = DiskAnalyzer.GetAllUstPathsUnderSubtree(projectRoot);
+        UstNumber += allUsts.Count;
+        
         var relevantUsts = allUsts
-            .Where(p => focusPath.StartsWith(p, StringComparison.OrdinalIgnoreCase) ||
-                        p.StartsWith(focusPath, StringComparison.OrdinalIgnoreCase))
+            .Where(p => projectRoot.StartsWith(p, StringComparison.OrdinalIgnoreCase) ||
+                        p.StartsWith(projectRoot, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
         relevantUsts = sortAscending
@@ -160,20 +254,27 @@ public partial class MainWindow : Window
 
         var projectNode = new ProjectNode
         {
+            TextColor = GetUstCategoryColor(DiskAnalyzer.GetPercentage(projectSize,_workspaceSize)),
             Path = projectRoot,
             FormattedSize = formattedProjectSize,
             Usts = relevantUsts.Select(ustPath =>
             {
                 double ustSize = DiskAnalyzer.GetDiskSize(ustPath);
                 double percent = DiskAnalyzer.GetPercentage(ustSize, projectSize);
+
+                Brush color = GetUstCategoryColor(percent);
+
                 return new UstNode
                 {
                     Path = ustPath,
                     FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                    Percentage = percent
+                    Percentage = percent,
+                    TextColor = color
                 };
+                
             }).ToList()
         };
+
 
         ProjectsTreeView.Items.Add(projectNode);
     }
@@ -220,29 +321,34 @@ public static class DiskAnalyzer
     /// <returns>A list of strings containing the paths to all found UST categories.</returns>
     public static List<string> GetAllUstPathsUnderSubtree(string root)
     {
+        // Initialize an empty list to store the paths of identified "UST" directories.
         var ustPaths = new List<string>();
         try
         {
             foreach (var dir in Directory.EnumerateDirectories(root))
             {
+                // Check if current directory is a "UST" category
                 if (IsUstCategory(dir))
                 {
                     ustPaths.Add(dir);
                 }
-                // Recursively search subdirectories
+                // Recursively search subdirectories and add results
                 ustPaths.AddRange(GetAllUstPathsUnderSubtree(dir));
             }
         }
+        
+        // Handle access denied errors gracefully
         catch (UnauthorizedAccessException ex)
         {
             // Log specific access denied errors if needed, otherwise just skip
             Console.WriteLine($"Access denied to directory '{root}': {ex.Message}");
         }
+        // Handle other general directory access errors
         catch (Exception ex)
         {
-            // General error logging
             Console.WriteLine($"Error accessing directory '{root}': {ex.Message}");
         }
+
         return ustPaths;
     }
 
@@ -261,8 +367,10 @@ public static class DiskAnalyzer
             {
                 return dir.FullName;
             }
+
             dir = dir.Parent;
         }
+
         return null;
     }
 
@@ -358,6 +466,7 @@ public static class DiskAnalyzer
                 {
                     projectPaths.Add(dir);
                 }
+
                 projectPaths.AddRange(GetAllProjectPaths(dir)); // Recursive call
             }
         }
@@ -369,7 +478,22 @@ public static class DiskAnalyzer
         {
             Console.WriteLine($"Error accessing directory '{path}': {ex.Message}");
         }
+
         return projectPaths;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

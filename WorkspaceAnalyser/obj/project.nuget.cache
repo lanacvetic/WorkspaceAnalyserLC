@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "pNVrKEk29Qo=",
+  "dgSpecHash": "+3QWZJqkCFg=",
   "success": true,
   "projectFilePath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\lcvetic\\.nuget\\packages\\dotnetprojects.wpftoolkit.datavisualization\\6.1.94\\dotnetprojects.wpftoolkit.datavisualization.6.1.94.nupkg.sha512"
+  ],
   "logs": []
 }
