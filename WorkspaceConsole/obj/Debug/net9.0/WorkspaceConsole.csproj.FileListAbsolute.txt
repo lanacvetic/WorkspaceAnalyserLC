@@ -12,3 +12,4 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\ref\WorkspaceConsole.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.sourcelink.json

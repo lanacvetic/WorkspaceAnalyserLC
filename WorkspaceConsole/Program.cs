@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 
 namespace WorkspaceConsole;
 
@@ -104,5 +105,6 @@ class Program
         if (totalSize == 0) return 0;
         return (partSize / totalSize) * 100.0;
     }
+    
     
 }

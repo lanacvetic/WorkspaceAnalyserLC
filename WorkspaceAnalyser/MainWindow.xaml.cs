@@ -8,7 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Media;
 using System.Windows.Input;
-
+using System.Text.Json;
+     
 namespace WpfApp;
 
 public class ProjectNode
@@ -67,8 +68,6 @@ public partial class MainWindow : Window
         }
     }
     public string PrjDisplayNumber => $"Projekte: {PrjNumber} - Controller: {UstNumber}";
-    
-    
         
     public MainWindow()
     {
@@ -82,10 +81,9 @@ public partial class MainWindow : Window
         {
             SortierungComboBox.SelectedIndex = 0; // Select the first item by default
         }
-        
 
     }
-
+    
     private void SetDisplayNumber()
     {
         DisplayNum.Content = $"Projekte: {PrjNumber} | Controller: {UstNumber}";
@@ -134,7 +132,8 @@ public partial class MainWindow : Window
             
             // If the input path is a project, display only this project.
             DisplaySingleProject(inputPath, sortAscending);
-            
+            var jsonString = JsonSerializer.Serialize(inputPath);
+            Console.WriteLine(jsonString);
         }
         else
         {
