@@ -7,6 +7,9 @@
         Background="#FAFAFA"
         FontFamily="Segoe UI" FontSize="14">
 
+    
+    <TabControl>
+        <TabItem Header= "Suchen">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
 
         <StackPanel Margin="20">
@@ -14,7 +17,7 @@
 
             <!-- Title -->
 
-            <TextBlock Text="Projektanalyse Tool" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"
+            <TextBlock Text="Workspace Analyser" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"
                        Foreground="#2E3A59" />
 
             <Label x:Name="DisplayNum" />
@@ -55,7 +58,7 @@
                 </ComboBox>
             </StackPanel>
 
-            <!-- Output Section -->
+            <!-- Output Section   -->
 
             <TreeView x:Name="ProjectsTreeView" Margin="0,10,0,0">
                 <TreeView.Resources>
@@ -79,6 +82,25 @@
             </TreeView>
         </StackPanel>
     </ScrollViewer>
+    </TabItem>
+        <TabItem Header="Müll">
+            <StackPanel Margin="10">
+                <TextBlock Text="Mülldateien" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,20"
+                           Foreground="#2E3A59" />
+                
+                <Button Content="Für Mülldateien suchen" 
+                        FontStyle="Italic" 
+                        BorderThickness="0"
+                        Click="JunkFilesClick"/>
+                <ListBox x:Name="JunkFilesListBox" 
+                         HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+            </StackPanel>
+        </TabItem>
+    </TabControl>
     
     <Window.Resources>
         <HierarchicalDataTemplate DataType="{x:Type local:ProjectNode}" ItemsSource="{Binding Usts}">
