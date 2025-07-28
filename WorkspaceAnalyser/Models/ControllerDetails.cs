@@ -10,4 +10,5 @@ public class ControllerDetails
     public string IPAdresse { get; set; }
     public bool Uebersetzt { get; set; }
     public string Uebersetzungstext { get; set; }
+    public List<LogEvent> Events { get; set; } = new();
 }

@@ -57,7 +57,7 @@ public partial class MainViewModel : ObservableObject
     /// <summary>
     /// A collection of file paths identified as junk files by the scanner.
     /// </summary>
-    [ObservableProperty] private List<string> _junkFiles = new();
+    [ObservableProperty] private ObservableCollection<string> _junkFiles = new();
     
     /// <summary>
     /// Holds the detailed information for the currently selected controller (`UstNode`). Bound to the details view pane.
