@@ -30,7 +30,7 @@ public partial class MainViewModel : ObservableObject
     //-------------------------------------------------------------------------
 
     /// <summary>
-    /// Tracks the currently selected node in the tree view to manage single selection.
+    /// Tracks the currently selected node in the tree view to manage a single selection.
     /// </summary>
     private NodeBase? _currentlySelectedNode;
 
@@ -107,101 +107,99 @@ public partial class MainViewModel : ObservableObject
     // Commands
     //-------------------------------------------------------------------------
 
-    /// <summary>
-    /// Triggers the workspace analysis based on the current `ProjectViewPath`.
-    /// This command orchestrates the entire analysis process.
-    /// </summary>
-    [RelayCommand]
-    private void StartAnalysis()
-    {
-        // Clear previous analysis results to prepare for a new run.
-        PrjNodes.Clear();
-        ProjectNumber = 0;
-        ControllerNumber = 0;
-        SelectedControllerDetails = null;
-        _currentlySelectedNode = null;
+/// <summary>
+/// Triggers the analysis based on the current ProjectViewPath. This simplified version
+/// only processes the path if it points directly to a controller folder.
+/// </summary>
+[RelayCommand]
+private void StartAnalysis()
+{
+    // Reset all relevant properties and collections for a clean run.
+    PrjNodes.Clear();
+    JunkFiles.Clear();
+    ProjectNumber = 0;
+    ControllerNumber = 0;
+    SelectedControllerDetails = null;
+    _currentlySelectedNode = null;
 
-        // Validate that the input path is not empty and actually exists.
-        if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
+    // Validate the input path.
+    if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
+    {
+        MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        return;
+    }
+
+    // Calculate the total size of the directory for percentage calculations later.
+    WorkspaceSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
+
+    // --- Case 1: The path points directly to a single controller folder. ---
+    if (DiskAnalyzer.IsUstCategory(ProjectViewPath))
+    {
+        var ustSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
+        var ustNode = new UstNode
         {
-            MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Path = ProjectViewPath,
+            FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+            Percentage = 100,
+            TextColor = ColorProvider.GetUstCategoryColor(100)
+        };
+        ustNode.PropertyChanged += Node_PropertyChanged;
+
+        var wrapperProjectNode = new ProjectNode
+        {
+            Path = ProjectViewPath,
+            FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+            TextColor = Brushes.Black,
+            Usts = [ustNode]
+        };
+        wrapperProjectNode.PropertyChanged += Node_PropertyChanged;
+
+        PrjNodes.Add(wrapperProjectNode);
+        ProjectNumber = 1;
+        ControllerNumber = 1;
+    }
+    // --- Case 2: The path points to a single project folder. ---
+    else if (DiskAnalyzer.IsProject(ProjectViewPath))
+    {
+        // Use the helper method to analyze and display the single project.
+        DisplayProjectAtPath(ProjectViewPath);
+    }
+    // --- Case 3: The path is a workspace containing multiple projects. ---
+    else
+    {
+        // Find all valid project paths within the workspace.
+        var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
+        if (!allPrjPaths.Any())
+        {
+            MessageBox.Show("No valid project (prj.xml) or controller (ust.xml) found at this path!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
-        // Calculate the total workspace size for use in percentage calculations.
-        WorkspaceSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
+        // Pre-calculate project sizes to allow for sorting.
+        var projectSizes = allPrjPaths.Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) }).ToList();
 
-        // The analysis logic is split into three cases based on the type of path provided.
+        // Sort the projects based on size and the user's selected sort order.
+        var sortedProjects = SortAscending
+            ? projectSizes.OrderBy(p => p.Size)
+            : projectSizes.OrderByDescending(p => p.Size);
 
-        // Case 1: The path points directly to a single controller folder (contains "ust.xml").
-        if (DiskAnalyzer.IsUstCategory(ProjectViewPath))
+        // Process and display each project from the sorted list.
+        foreach (var prj in sortedProjects)
         {
-            var ustSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
-            var ustNode = new UstNode
-            {
-                Path = ProjectViewPath,
-                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                Percentage = 100, // It's the only item, so it's 100% of the view.
-                TextColor = ColorProvider.GetUstCategoryColor(100)
-            };
-            ustNode.PropertyChanged += Node_PropertyChanged; // Hook up selection handler.
-
-            // Create a dummy project node to wrap the controller, maintaining a consistent data structure.
-            var wrapperProjectNode = new ProjectNode
-            {
-                Path = ProjectViewPath,
-                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                TextColor = Brushes.Black,
-                Usts = new List<UstNode> { ustNode }
-            };
-            wrapperProjectNode.PropertyChanged += Node_PropertyChanged;
-
-            PrjNodes.Add(wrapperProjectNode);
-            ProjectNumber = 1;
-            ControllerNumber = 1;
-        }
-        // Case 2: The path points to a single project folder (contains "prj.xml").
-        else if (DiskAnalyzer.IsProject(ProjectViewPath))
-        {
-            DisplayProjectAtPath(ProjectViewPath);
-        }
-        // Case 3: The path is a workspace containing multiple projects. This is the standard case.
-        else
-        {
-            var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
-            if (!allPrjPaths.Any())
-            {
-                MessageBox.Show("No valid project (prj.xml) or controller (ust.xml) found at this path!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            // Pre-calculate project sizes to sort them before processing.
-            // Note: This is slightly inefficient as GetDiskSize will be called again inside DisplayProjectAtPath.
-            // An optimization could be to pass the pre-calculated size to the display method.
-            var projectSizes = allPrjPaths.Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) }).ToList();
-
-            // Sort the list of projects based on their size and the user's selected sort order.
-            var sortedProjects = SortAscending
-                ? projectSizes.OrderBy(p => p.Size)
-                : projectSizes.OrderByDescending(p => p.Size);
-
-            // Process and display each project from the sorted list.
-            foreach (var prj in sortedProjects)
-            {
-                DisplayProjectAtPath(prj.Path);
-            }
-        }
-
-        // After the analysis is complete, save the results to a JSON report file.
-        try
-        {
-            _reportService.SaveAnalysisResults(PrjNodes, ProjectViewPath);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error saving analysis JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            DisplayProjectAtPath(prj.Path);
         }
     }
+
+    // After the analysis is complete, save the results to a JSON report file.
+    try
+    {
+        _reportService.SaveAnalysisResults(PrjNodes, ProjectViewPath);
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show($"Error saving analysis JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+}
 
     /// <summary>
     /// Opens the selected project's folder in Windows Explorer.
@@ -239,7 +237,6 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task ScanForJunkFilesAsync()
     {
-        JunkFiles.Clear();
         if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
         {
             MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -392,12 +389,12 @@ public partial class MainViewModel : ObservableObject
                     Percentage = DiskAnalyzer.GetPercentage(ustSize, projectSize),
                     TextColor = ColorProvider.GetUstCategoryColor(DiskAnalyzer.GetPercentage(ustSize, projectSize))
                 };
-                ustNode.PropertyChanged += Node_PropertyChanged; // Hook up selection handler.
+                ustNode.PropertyChanged += Node_PropertyChanged; // Hook up a selection handler.
                 return ustNode;
             }).ToList()
         };
 
-        projectNode.PropertyChanged += Node_PropertyChanged; // Hook up selection handler.
+        projectNode.PropertyChanged += Node_PropertyChanged; // Hook up a selection handler.
         ControllerNumber += projectNode.Usts.Count; // Add to the total controller count.
         PrjNodes.Add(projectNode); // Add the fully populated project node to the main collection for display.
     }
@@ -416,7 +413,7 @@ public partial class MainViewModel : ObservableObject
 
         if (sender is NodeBase { IsSelected: true } newlySelectedNode)
         {
-            // If another node was already selected, deselect it to enforce single selection.
+            // If another node was already selected, deselect it to enforce a single selection.
             if (_currentlySelectedNode != null && _currentlySelectedNode != newlySelectedNode)
             {
                 _currentlySelectedNode.IsSelected = false;
@@ -446,7 +443,7 @@ public partial class MainViewModel : ObservableObject
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading controller details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            SelectedControllerDetails = null; // Clear details on error.
+            SelectedControllerDetails = null; // Clear details on an error.
         }
     }
 }
