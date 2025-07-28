@@ -23,3 +23,30 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceAnalyser\obj\Debug\net
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.csproj.AssemblyReference.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceAnalyser\bin\Debug\net9.0-windows\DotNetProjects.DataVisualization.Toolkit.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceAnalyser\obj\Debug\net9.0-windows\Workspac.0DB50751.Up2Date
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.csproj.AssemblyReference.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\MainWindow.g.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser_MarkupCompile.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser_MarkupCompile.lref
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\WorkspaceAnalyser.exe
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\WorkspaceAnalyser.deps.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\WorkspaceAnalyser.runtimeconfig.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\WorkspaceAnalyser.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\WorkspaceAnalyser.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\DotNetProjects.DataVisualization.Toolkit.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\Microsoft.Xaml.Behaviors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\MainWindow.baml
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.g.resources
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.AssemblyInfoInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.AssemblyInfo.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.csproj.CoreCompileInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.sourcelink.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\Workspac.0DB50751.Up2Date
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\refint\WorkspaceAnalyser.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.genruntimeconfig.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\ref\WorkspaceAnalyser.dll

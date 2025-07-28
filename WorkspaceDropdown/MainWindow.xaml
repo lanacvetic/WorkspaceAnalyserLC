@@ -4,9 +4,11 @@
         Title="Dropdown Info Example" Height="200" Width="300">
     <Grid>
         <!-- Button to trigger showing info -->
-        <Button Name="infoButton" Content="Click for Info" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="30" Click="InfoButton_Click" Margin="100,50,0,0"/>
-        
+        <Button Name="infoButton" Content="Click for Info" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Width="120" Height="30" Click="InfoButton_Click" Margin="100,50,0,0" />
+
         <!-- TextBlock to display the information -->
-        <TextBlock Name="infoText" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="30" Margin="100,100,0,0" Text="No information yet" Visibility="Collapsed"/>
+        <TextBlock Name="infoText" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="30"
+                   Margin="100,100,0,0" Text="No information yet" Visibility="Collapsed" />
     </Grid>
 </Window>

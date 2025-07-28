@@ -13,3 +13,22 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\ref\WorkspaceConsole.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.sourcelink.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.exe
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.deps.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.runtimeconfig.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\CommunityToolkit.Mvvm.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\Microsoft.Xaml.Behaviors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.csproj.AssemblyReference.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.AssemblyInfoInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.AssemblyInfo.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.csproj.CoreCompileInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.sourcelink.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\Workspac.0E9C8637.Up2Date
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\refint\WorkspaceConsole.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.genruntimeconfig.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\ref\WorkspaceConsole.dll

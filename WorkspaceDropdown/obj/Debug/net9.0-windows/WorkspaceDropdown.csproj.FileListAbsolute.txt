@@ -17,3 +17,27 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceDropdown\obj\Debug\net
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser\WorkspaceDropdown\obj\Debug\net9.0-windows\ref\WorkspaceDropdown.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.exe
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.deps.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.runtimeconfig.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\Microsoft.Xaml.Behaviors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.csproj.AssemblyReference.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\MainWindow.baml
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\MainWindow.g.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown_MarkupCompile.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.g.resources
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.AssemblyInfoInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.AssemblyInfo.cs
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.csproj.CoreCompileInputs.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.sourcelink.json
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\Workspac.FF6CF6A3.Up2Date
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\refint\WorkspaceDropdown.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.pdb
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.genruntimeconfig.cache
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\ref\WorkspaceDropdown.dll

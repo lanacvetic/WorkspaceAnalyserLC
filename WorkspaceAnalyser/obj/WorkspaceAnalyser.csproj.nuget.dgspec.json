@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj": {}
+    "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj": {
+    "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
+        "projectUniqueName": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
         "projectName": "WorkspaceAnalyser",
-        "projectPath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
+        "projectPath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
         "packagesPath": "C:\\Users\\lcvetic\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceAnalyser\\obj\\",
+        "outputPath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lcvetic\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -44,9 +44,17 @@
         "net9.0-windows7.0": {
           "targetAlias": "net9.0-windows",
           "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.4.0, )"
+            },
             "DotNetProjects.WpfToolkit.DataVisualization": {
               "target": "Package",
               "version": "[6.1.94, )"
+            },
+            "Microsoft.Xaml.Behaviors.Wpf": {
+              "target": "Package",
+              "version": "[1.1.135, )"
             }
           },
           "imports": [
@@ -68,7 +76,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

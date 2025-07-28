@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "RJFfY4yVO6o=",
+  "dgSpecHash": "11A9ynVOeUI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser\\WorkspaceDropdown\\WorkspaceDropdown.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceDropdown\\WorkspaceDropdown.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lcvetic\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
+    "C:\\Users\\lcvetic\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.135\\microsoft.xaml.behaviors.wpf.1.1.135.nupkg.sha512"
+  ],
   "logs": []
 }
