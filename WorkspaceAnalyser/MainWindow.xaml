@@ -9,7 +9,8 @@
         mc:Ignorable="d"
         Title="Projektanalyse" Height="700" Width="1000"
         Background="#FAFAFA"
-        FontFamily="Segoe UI" FontSize="14">
+        FontFamily="Segoe UI" FontSize="14"
+        Style="{StaticResource MaterialDesignWindow}">
 
     <Window.Resources>
         <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
@@ -20,6 +21,12 @@
             <TextBlock Text="{Binding Display}" Foreground="{Binding TextColor}" />
         </DataTemplate>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        
+        <Style x:Key="MaterialSymbolIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Material Symbols Rounded Thin" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
     </Window.Resources>
 
 
@@ -78,14 +85,20 @@
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="📂" Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0"/>
+                                    <Button Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                                            CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                                        <TextBlock Style="{StaticResource MaterialSymbolIcon}" Text="folder" />
+                                    </Button>
                                     <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="{Binding TextColor}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
                             <DataTemplate DataType="{x:Type models:UstNode}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="📂" Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0"/>
+                                    <Button Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                                            CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                                        <TextBlock Style="{StaticResource MaterialSymbolIcon}" Text="folder" />
+                                    </Button>
                                     <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
