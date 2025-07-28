@@ -79,7 +79,7 @@
                             <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="📂" Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0"/>
-                                    <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="Black" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="{Binding TextColor}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
@@ -175,10 +175,18 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="140"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <TextBlock Grid.Column="0" Text="{Binding Date}" Opacity="0.8" VerticalAlignment="Top"/>
                         <TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="Wrap" />
+
+                        <Button Grid.Column="2" 
+                                Content="Open Log" 
+                                Margin="10,0,0,0" 
+                                Padding="5,1"
+                                Command="{Binding DataContext.OpenLogFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

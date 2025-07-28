@@ -72,18 +72,22 @@ public class ControllerDetailService : IControllerDetailService
                 foreach (var logFile in logFiles)
                 {
                     var doc = XDocument.Load(logFile);
-                    
+
+                    // Find <Neu> elements and include the source file path
                     var newFileEvents = doc.Descendants("Neu")
                         .Select(el => new LogEvent(
                             Date: el.Element("Datum")?.Value ?? "Unknown Date",
-                            Title: $"New file created: {el.Element("Name")?.Value ?? "N/A"}"
+                            Title: $"New file created: {el.Element("Name")?.Value ?? "N/A"}",
+                            SourceFilePath: logFile // <-- Add the file path
                         ));
                     events.AddRange(newFileEvents);
 
+                    // Find <PlugIn_importiert> elements and include the source file path
                     var pluginEvents = doc.Descendants("PlugIn_importiert")
                         .Select(el => new LogEvent(
                             Date: el.Element("Datum")?.Value ?? "Unknown Date",
-                            Title: $"New PlugIn was imported: {el.Element("Info")?.Value ?? "N/A"}"
+                            Title: $"New PlugIn was imported: {el.Element("Info")?.Value ?? "N/A"}",
+                            SourceFilePath: logFile // <-- Add the file path
                         ));
                     events.AddRange(pluginEvents);
                 }

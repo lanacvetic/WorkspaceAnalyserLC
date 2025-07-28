@@ -446,4 +446,41 @@ private void StartAnalysis()
             SelectedControllerDetails = null; // Clear details on an error.
         }
     }
+    
+    /// <summary>
+    /// Opens the source Log.xml file for a given event using the default system application.
+    /// </summary>
+    /// <param name="logEvent">The event whose source file should be opened.</param>
+    [RelayCommand]
+    private void OpenLogFile(LogEvent? logEvent)
+    {
+
+        if (logEvent == null || string.IsNullOrWhiteSpace(logEvent.SourceFilePath))
+        {
+            // --- START: Temporary Debugging Code ---
+            string pathValue = logEvent?.SourceFilePath ?? "The path is NULL";
+            MessageBox.Show($"Command is exiting early. The file path is: '{pathValue}'");
+            // --- END: Temporary Debugging Code ---
+            return;
+        }
+
+        if (!File.Exists(logEvent.SourceFilePath))
+        {
+            MessageBox.Show($"The source file could not be found at: {logEvent.SourceFilePath}", "File Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        try
+        {
+            var psi = new ProcessStartInfo(logEvent.SourceFilePath)
+            {
+                UseShellExecute = true
+            };
+            Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not open file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 }
