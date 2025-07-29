@@ -19,6 +19,8 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\De
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\WorkspaceConsole.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\CommunityToolkit.Mvvm.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignColors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignThemes.Wpf.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\Microsoft.Xaml.Behaviors.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.csproj.AssemblyReference.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.GeneratedMSBuildEditorConfig.editorconfig
@@ -32,5 +34,3 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\De
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\ref\WorkspaceConsole.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignColors.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignThemes.Wpf.dll

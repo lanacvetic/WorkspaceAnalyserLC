@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +22,10 @@
       <Resource Include="Assets\folder.png" />
       <None Remove="Assets\delete.png" />
       <Resource Include="Assets\delete.png" />
+      <None Remove="Assets\copy.png" />
+      <Resource Include="Assets\copy.png" />
+      <None Remove="Assets\iconfile.ico" />
+      <Resource Include="Assets\app.ico" />
     </ItemGroup>
 
 </Project>

@@ -1,33 +1,50 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using WorkspaceAnalyser.Models;
 using WorkspaceAnalyser.Services;
 
 namespace WorkspaceAnalyser.Utils;
 
-public class JunkFileScanner : IJunkFileScanner // Implements the interface
+public class JunkFileScanner : IJunkFileScanner
 {
-    // No constructor injection needed for DiskAnalyzer here,
-    // because DiskAnalyzer's methods are static and called directly.
-    // Explicit parameterless constructor
-
-    public async Task<List<string>> ScanForJunkFilesAsync(string rootPath)
+    // The implementation uses the patterns to perform the search
+    public async Task<List<string>> ScanForJunkFilesAsync(string path, IEnumerable<JunkFilePattern> patterns)
     {
-        var junkFiles = new List<string>();
-        try
+        return await Task.Run(() =>
         {
-            await Task.Run(() =>
-            {
-                // Directly call the static DiskAnalyzer.IsJunkFile method
-                foreach (var file in Directory.EnumerateFiles(rootPath, "*.*", SearchOption.AllDirectories))
-                    if (DiskAnalyzer.IsJunkFile(file)) // <--- Calling static method directly
-                        junkFiles.Add(file);
-            });
-        }
-        catch (Exception ex)
-        {
-            // Re-throw the exception for the ViewModel to handle (e.g., show MessageBox)
-            throw new InvalidOperationException($"Failed to scan for junk files in {rootPath}.", ex);
-        }
+            var junkFiles = new List<string>();
+            
+            // Get only the patterns that are enabled by the user in the Settings tab
+            var enabledPatterns = patterns.Where(p => p.IsEnabled).Select(p => p.Pattern);
 
-        return junkFiles;
+            // Search for files matching each enabled pattern
+            foreach (var pattern in enabledPatterns)
+            {
+                try
+                {
+                    // Search for files matching specific names (e.g., "mainbdf.mot")
+                    if (!pattern.Contains('*'))
+                    {
+                        junkFiles.AddRange(Directory.GetFiles(path, pattern, SearchOption.AllDirectories));
+                    }
+                    // Search for files matching wildcards (e.g., "*.tmp")
+                    else
+                    {
+                        junkFiles.AddRange(Directory.GetFiles(path, pattern, SearchOption.AllDirectories));
+                    }
+                }
+                catch (IOException) 
+                { 
+                    // Ignore errors for locked files, long paths, etc.
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // Ignore folders the user doesn't have permission to access
+                }
+            }
+            return junkFiles;
+        });
     }
 }

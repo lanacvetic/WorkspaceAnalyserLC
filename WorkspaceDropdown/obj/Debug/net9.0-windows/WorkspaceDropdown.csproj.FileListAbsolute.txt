@@ -23,6 +23,8 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\D
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\WorkspaceDropdown.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignColors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignThemes.Wpf.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\Microsoft.Xaml.Behaviors.dll
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.csproj.AssemblyReference.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\MainWindow.baml
@@ -41,5 +43,3 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\D
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\ref\WorkspaceDropdown.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignColors.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignThemes.Wpf.dll

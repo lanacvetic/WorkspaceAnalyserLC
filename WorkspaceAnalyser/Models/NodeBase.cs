@@ -7,6 +7,8 @@ namespace WorkspaceAnalyser.Models;
 public class NodeBase : INotifyPropertyChanged
 {
     private bool _isSelected;
+    
+    public string Path { get; set; }
 
     public bool IsSelected
     {
@@ -21,7 +23,6 @@ public class NodeBase : INotifyPropertyChanged
         }
     }
     
-
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged(string propertyName)
@@ -34,7 +35,7 @@ public class NodeBase : INotifyPropertyChanged
 public class ProjectNode : NodeBase
 {
     public string Display => $"{Path}: {FormattedSize}";
-    public string Path { get; set; }
+    // Remove Path from here
     public string FormattedSize { get; set; }
 
     [JsonIgnore] public Brush TextColor { get; set; }
@@ -46,9 +47,8 @@ public class UstNode : NodeBase
 {
     public string Display => $"{Path}: {FormattedSize} ({Percentage:0.##}%)";
 
-    public string Path { get; set; }
+    // Remove Path from here
     public string FormattedSize { get; set; }
-
     public double Percentage { get; set; }
 
     [JsonIgnore] public Brush TextColor { get; set; }

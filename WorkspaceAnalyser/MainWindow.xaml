@@ -65,24 +65,39 @@
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             </Style>
                         </TreeView.ItemContainerStyle>
-                        <TreeView.Resources>
-                            <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
-                                        <Image Source="/Assets/folder.png" Width="16" Height="16" />
-                                    </Button>
-                                    <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="{Binding TextColor}" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                            <DataTemplate DataType="{x:Type models:UstNode}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
-                                        <Image Source="/Assets/folder.png" Width="16" Height="16" />
-                                    </Button>
-                                    <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </TreeView.Resources>
+                       <TreeView.Resources>
+    <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                    CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                <Image Source="/Assets/folder.png" Width="16" Height="16" />
+            </Button>
+            
+            <Button Command="{Binding DataContext.CopyPathCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                    CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                <Image Source="/Assets/copy.png" Width="16" Height="16" />
+            </Button>
+
+            <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="{Binding TextColor}" VerticalAlignment="Center" />
+        </StackPanel>
+    </HierarchicalDataTemplate>
+
+    <DataTemplate DataType="{x:Type models:UstNode}">
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                    CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                <Image Source="/Assets/folder.png" Width="16" Height="16" />
+            </Button>
+            
+            <Button Command="{Binding DataContext.CopyPathCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
+                    CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                <Image Source="/Assets/copy.png" Width="16" Height="16" />
+            </Button>
+
+            <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}" VerticalAlignment="Center"/>
+        </StackPanel>
+    </DataTemplate>
+</TreeView.Resources>
                     </TreeView>
                 </StackPanel>
             </ScrollViewer>
@@ -116,6 +131,28 @@
             </Grid>
         </TabItem>
 
+        <TabItem Header="Settings">
+            <StackPanel Margin="20">
+                <TextBlock Text="Junk File Settings" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
+                <TextBlock Text="Select which file patterns to include in the junk file scan:" Margin="0,0,0,10" />
+
+                <Border Background="#F0F0F0" Padding="15" CornerRadius="10">
+                    <ListBox ItemsSource="{Binding JunkFilePatterns}" Background="Transparent" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsEnabled}" Margin="0,5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Pattern}" FontWeight="Bold" Margin="0,0,10,0" MinWidth="80"/>
+                                        <TextBlock Text="{Binding Description}" Opacity="0.7"/>
+                                    </StackPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </StackPanel>
+        </TabItem>
+        
         <TabItem Header="Kontroller-Daten">
             <Grid Margin="10" DataContext="{Binding SelectedControllerDetails}" Visibility="{Binding SelectedControllerDetails, Converter={StaticResource NullToVisibilityConverter}}">
                 <Grid.RowDefinitions>

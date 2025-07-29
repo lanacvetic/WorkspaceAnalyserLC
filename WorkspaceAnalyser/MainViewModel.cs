@@ -93,6 +93,11 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     [ObservableProperty]
     private bool _isScanning;
+    /// <summary>
+    /// Gets or sets the list of junk file patterns for the settings tab.
+    /// </summary>
+    [ObservableProperty]
+    private ObservableCollection<JunkFilePattern> _junkFilePatterns = new();
 
     //-------------------------------------------------------------------------
     // Constructor
@@ -106,124 +111,129 @@ public partial class MainViewModel : ObservableObject
         _reportService = new AnalysisReportService();
         _controllerDetailService = new ControllerDetailService();
         _junkFileScanner = new JunkFileScanner();
+        
+        // Initialize the default junk file patterns
+        JunkFilePatterns.Add(new JunkFilePattern("mainbdf.mot", "Motion Definition File"));
+        JunkFilePatterns.Add(new JunkFilePattern("mainbdf.ppe", "Project Parameter File"));
+        JunkFilePatterns.Add(new JunkFilePattern("grafikbilderinfo.txt", "Graphics Info Text"));
+        JunkFilePatterns.Add(new JunkFilePattern("*.bak", "Backup Files"));
+        JunkFilePatterns.Add(new JunkFilePattern("*.tmp", "Temporary Files"));
+        JunkFilePatterns.Add(new JunkFilePattern("*.sav", "Save Files"));
+        JunkFilePatterns.Add(new JunkFilePattern("mainbdf_fbg5.inc", "Include File"));
+        JunkFilePatterns.Add(new JunkFilePattern("mainbdf_tup.inc", "Include File"));
+        JunkFilePatterns.Add(new JunkFilePattern("fupliste.xml", "FUP List XML"));
+        JunkFilePatterns.Add(new JunkFilePattern("fupliste.xmlpl", "FUP List File"));
+        JunkFilePatterns.Add(new JunkFilePattern("fupblattliste.mnu", "FUP Menu File"));
     }
 
     //-------------------------------------------------------------------------
     // Commands
     //-------------------------------------------------------------------------
 
-/// <summary>
-/// Triggers the analysis based on the current ProjectViewPath. This simplified version
-/// only processes the path if it points directly to a controller folder.
-/// </summary>
-[RelayCommand]
-private void StartAnalysis()
-{
-    // Reset all relevant properties and collections for a clean run.
-    PrjNodes.Clear();
-    JunkFiles.Clear();
-    ProjectNumber = 0;
-    ControllerNumber = 0;
-    SelectedControllerDetails = null;
-    _currentlySelectedNode = null;
-
-    // Validate the input path.
-    if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
+    /// <summary>
+    /// Triggers the analysis based on the current ProjectViewPath.
+    /// </summary>
+    [RelayCommand]
+    private void StartAnalysis()
     {
-        MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        return;
-    }
+        // Reset all relevant properties and collections for a clean run.
+        PrjNodes.Clear();
+        JunkFiles.Clear();
+        ProjectNumber = 0;
+        ControllerNumber = 0;
+        SelectedControllerDetails = null;
+        _currentlySelectedNode = null;
 
-    // Calculate the total size of the directory for percentage calculations later.
-    WorkspaceSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
-
-    // --- Case 1: The path points directly to a single controller folder. ---
-    if (DiskAnalyzer.IsUstCategory(ProjectViewPath))
-    {
-        var ustSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
-        var ustNode = new UstNode
+        // Validate the input path.
+        if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
         {
-            Path = ProjectViewPath,
-            FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-            Percentage = 100,
-            TextColor = ColorProvider.GetUstCategoryColor(100)
-        };
-        ustNode.PropertyChanged += Node_PropertyChanged;
-
-        var wrapperProjectNode = new ProjectNode
-        {
-            Path = ProjectViewPath,
-            FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-            TextColor = Brushes.Black,
-            Usts = [ustNode]
-        };
-        wrapperProjectNode.PropertyChanged += Node_PropertyChanged;
-
-        PrjNodes.Add(wrapperProjectNode);
-        ProjectNumber = 1;
-        ControllerNumber = 1;
-    }
-    // --- Case 2: The path points to a single project folder. ---
-    else if (DiskAnalyzer.IsProject(ProjectViewPath))
-    {
-        // Use the helper method to analyze and display the single project.
-        DisplayProjectAtPath(ProjectViewPath);
-    }
-    // --- Case 3: The path is a workspace containing multiple projects. ---
-    else
-    {
-        // Find all valid project paths within the workspace.
-        var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
-        if (!allPrjPaths.Any())
-        {
-            MessageBox.Show("No valid project (prj.xml) or controller (ust.xml) found at this path!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
-        // Pre-calculate project sizes to allow for sorting.
-        var projectSizes = allPrjPaths.Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) }).ToList();
+        // Calculate the total size of the directory for percentage calculations later.
+        WorkspaceSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
 
-        // Sort the projects based on size and the user's selected sort order.
-        var sortedProjects = SortAscending
-            ? projectSizes.OrderBy(p => p.Size)
-            : projectSizes.OrderByDescending(p => p.Size);
-
-        // Process and display each project from the sorted list.
-        foreach (var prj in sortedProjects)
+        // --- Case 1: The path points directly to a single controller folder. ---
+        if (DiskAnalyzer.IsUstCategory(ProjectViewPath))
         {
-            DisplayProjectAtPath(prj.Path);
+            var ustSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
+            var ustNode = new UstNode
+            {
+                Path = ProjectViewPath,
+                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+                Percentage = 100,
+                TextColor = ColorProvider.GetUstCategoryColor(100)
+            };
+            ustNode.PropertyChanged += Node_PropertyChanged;
+
+            var wrapperProjectNode = new ProjectNode
+            {
+                Path = ProjectViewPath,
+                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+                TextColor = Brushes.Black,
+                Usts = [ustNode]
+            };
+            wrapperProjectNode.PropertyChanged += Node_PropertyChanged;
+
+            PrjNodes.Add(wrapperProjectNode);
+            ProjectNumber = 1;
+            ControllerNumber = 1;
+        }
+        // --- Case 2: The path points to a single project folder. ---
+        else if (DiskAnalyzer.IsProject(ProjectViewPath))
+        {
+            DisplayProjectAtPath(ProjectViewPath);
+        }
+        // --- Case 3: The path is a workspace containing multiple projects. ---
+        else
+        {
+            var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
+            if (!allPrjPaths.Any())
+            {
+                MessageBox.Show("No valid project (prj.xml) or controller (ust.xml) found at this path!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var projectSizes = allPrjPaths.Select(prj => new { Path = prj, Size = DiskAnalyzer.GetDiskSize(prj) }).ToList();
+            var sortedProjects = SortAscending
+                ? projectSizes.OrderBy(p => p.Size)
+                : projectSizes.OrderByDescending(p => p.Size);
+
+            foreach (var prj in sortedProjects)
+            {
+                DisplayProjectAtPath(prj.Path);
+            }
+        }
+
+        // After the analysis is complete, save the results to a JSON report file.
+        try
+        {
+            _reportService.SaveAnalysisResults(PrjNodes, ProjectViewPath);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving analysis JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
-    // After the analysis is complete, save the results to a JSON report file.
-    try
+    /// <summary>
+    /// Clears the current analysis results and the search path from the view.
+    /// </summary>
+    [RelayCommand]
+    private void ClearAnalysis()
     {
-        _reportService.SaveAnalysisResults(PrjNodes, ProjectViewPath);
+        PrjNodes.Clear();
+        JunkFiles.Clear();
+        ProjectNumber = 0;
+        ControllerNumber = 0;
+        SelectedControllerDetails = null;
+        _currentlySelectedNode = null;
+        ProjectViewPath = string.Empty;
     }
-    catch (Exception ex)
-    {
-        MessageBox.Show($"Error saving analysis JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-    }
-}
-
-/// <summary>
-/// Clears the current analysis results from the view.
-/// </summary>
-[RelayCommand]
-private void ClearAnalysis()
-{
-    PrjNodes.Clear();
-    JunkFiles.Clear();
-    ProjectNumber = 0;
-    ControllerNumber = 0;
-    SelectedControllerDetails = null;
-    _currentlySelectedNode = null;
-    ProjectViewPath = string.Empty; // Add this line to clear the search box
-}
 
     /// <summary>
     /// Opens the selected project's folder in Windows Explorer.
-    /// Triggered by a button on a project item in the UI.
     /// </summary>
     /// <param name="prjNode">The ProjectNode whose folder should be opened.</param>
     [RelayCommand]
@@ -236,8 +246,7 @@ private void ClearAnalysis()
     }
 
     /// <summary>
-    /// Opens the selected controller's folder in Windows Explorer and loads its details.
-    /// Triggered by a button on a controller item in the UI.
+    /// Opens the selected controller's folder in Windows Explorer.
     /// </summary>
     /// <param name="ustNode">The UstNode whose folder should be opened.</param>
     [RelayCommand]
@@ -245,9 +254,28 @@ private void ClearAnalysis()
     {
         if (ustNode != null)
         {
-            // Asynchronously load details for the selected controller.
             _ = LoadControllerDetailsAsync(ustNode.Path);
             Process.Start("explorer.exe", ustNode.Path);
+        }
+    }
+    
+    /// <summary>
+    /// Copies the path of a given node to the clipboard.
+    /// </summary>
+    /// <param name="node">The node whose path should be copied.</param>
+    [RelayCommand]
+    private void CopyPath(NodeBase? node)
+    {
+        if (node != null && !string.IsNullOrEmpty(node.Path))
+        {
+            try
+            {
+                Clipboard.SetText(node.Path);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not copy path to clipboard: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -264,12 +292,11 @@ private void ClearAnalysis()
         }
         
         JunkFiles.Clear();
-        IsScanning = true; // Show the "Scanning..." message
+        IsScanning = true;
         
         try
         {
-            // Use the junk file scanner service to find files.
-            var foundJunkFiles = await _junkFileScanner.ScanForJunkFilesAsync(ProjectViewPath);
+            var foundJunkFiles = await _junkFileScanner.ScanForJunkFilesAsync(ProjectViewPath, JunkFilePatterns);
             foreach (var file in foundJunkFiles)
             {
                 JunkFiles.Add(file);
@@ -281,7 +308,7 @@ private void ClearAnalysis()
         }
         finally
         {
-            IsScanning = false; // Hide the "Scanning..." message
+            IsScanning = false;
         }
     }
 
@@ -297,7 +324,6 @@ private void ClearAnalysis()
             return;
         }
 
-        // Ask the user for confirmation as this is a destructive and irreversible action.
         var confirmResult = MessageBox.Show(
             $"Are you sure you want to PERMANENTLY delete {JunkFiles.Count} file(s)?\n\nThis action CANNOT be undone.",
             "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
@@ -307,10 +333,9 @@ private void ClearAnalysis()
         var successfullyDeletedFiles = new List<string>();
         var failedToDeleteFiles = new List<string>();
 
-        // Run the deletion on a background thread to keep the UI responsive.
         await Task.Run(() =>
         {
-            var filesToDelete = JunkFiles.ToList(); // Create a copy to iterate over while modifying the original collection.
+            var filesToDelete = JunkFiles.ToList();
             foreach (var filePath in filesToDelete)
             {
                 try
@@ -328,16 +353,13 @@ private void ClearAnalysis()
             }
         });
 
-        // Update the UI on the main thread after the background task is complete.
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // Remove successfully deleted files from the UI list.
             foreach (var deletedFile in successfullyDeletedFiles)
             {
                 JunkFiles.Remove(deletedFile);
             }
             
-            // Show a summary message to the user.
             var summary = new StringBuilder("Deletion complete.\n\n");
             if (failedToDeleteFiles.Any())
             {
@@ -354,126 +376,6 @@ private void ClearAnalysis()
         });
     }
     
-    //-------------------------------------------------------------------------
-    // Partial On...Changed Methods
-    //-------------------------------------------------------------------------
-
-    /// <summary>
-    /// This method is automatically called by the CommunityToolkit.Mvvm source generator
-    /// whenever the `SelectedSortOrder` property changes.
-    /// </summary>
-    /// <param name="value">The new value of the `SelectedSortOrder` property.</param>
-    partial void OnSelectedSortOrderChanged(SortOrder value)
-    {
-        // Update the boolean flag used for sorting.
-        SortAscending = value == SortOrder.KleinsteZuerst;
-        
-        // If the analysis can be run, re-run it to apply the new sort order.
-        if (StartAnalysisCommand.CanExecute(null))
-        {
-            StartAnalysisCommand.Execute(null);
-        }
-    }
-    
-    //-------------------------------------------------------------------------
-    // Private Helper Methods
-    //-------------------------------------------------------------------------
-
-    /// <summary>
-    /// Analyzes a single project directory, creates a `ProjectNode`, and populates it with its child `UstNode` controllers.
-    /// </summary>
-    /// <param name="path">The full path to the project directory.</param>
-    private void DisplayProjectAtPath(string path)
-    {
-        var projectSize = DiskAnalyzer.GetDiskSize(path);
-        ProjectNumber++;
-
-        // Find all controller paths ("ust.xml" folders) within this project's directory.
-        var allUsts = DiskAnalyzer.GetAllUstPathsUnderSubtree(path);
-        var filteredUsts = allUsts.Where(p => p.StartsWith(path, StringComparison.OrdinalIgnoreCase));
-
-        // Sort the controllers within the project based on their size.
-        var sortedUsts = SortAscending
-            ? filteredUsts.OrderBy(DiskAnalyzer.GetDiskSize)
-            : filteredUsts.OrderByDescending(DiskAnalyzer.GetDiskSize);
-
-        // Create the main ProjectNode for the UI.
-        var projectNode = new ProjectNode
-        {
-            Path = path,
-            FormattedSize = DiskAnalyzer.FormatSize(projectSize),
-            // The color is determined by the project's size relative to the entire workspace.
-            TextColor = ColorProvider.GetProjectCategoryColor(DiskAnalyzer.GetPercentage(projectSize, WorkspaceSize)),
-            // Create a UstNode for each controller found.
-            Usts = sortedUsts.Select(ustPath =>
-            {
-                var ustSize = DiskAnalyzer.GetDiskSize(ustPath);
-                var ustNode = new UstNode
-                {
-                    Path = ustPath,
-                    FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                    // Percentage and color are relative to the parent project's size.
-                    Percentage = DiskAnalyzer.GetPercentage(ustSize, projectSize),
-                    TextColor = ColorProvider.GetUstCategoryColor(DiskAnalyzer.GetPercentage(ustSize, projectSize))
-                };
-                ustNode.PropertyChanged += Node_PropertyChanged; // Hook up a selection handler.
-                return ustNode;
-            }).ToList()
-        };
-
-        projectNode.PropertyChanged += Node_PropertyChanged; // Hook up a selection handler.
-        ControllerNumber += projectNode.Usts.Count; // Add to the total controller count.
-        PrjNodes.Add(projectNode); // Add the fully populated project node to the main collection for display.
-    }
-
-    /// <summary>
-    /// Event handler for the `PropertyChanged` event on `ProjectNode` and `UstNode` objects.
-    /// It primarily handles changes to the `IsSelected` property to manage UI selection.
-    /// </summary>
-    private void Node_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        // We only care about the 'IsSelected' property.
-        if (e.PropertyName != nameof(NodeBase.IsSelected))
-        {
-            return;
-        }
-
-        if (sender is NodeBase { IsSelected: true } newlySelectedNode)
-        {
-            // If another node was already selected, deselect it to enforce a single selection.
-            if (_currentlySelectedNode != null && _currentlySelectedNode != newlySelectedNode)
-            {
-                _currentlySelectedNode.IsSelected = false;
-            }
-            // Track the newly selected node.
-            _currentlySelectedNode = newlySelectedNode;
-
-            // If the selected node is a controller, trigger loading its details.
-            if (newlySelectedNode is UstNode ustNode)
-            {
-                _ = LoadControllerDetailsAsync(ustNode.Path);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Asynchronously loads detailed information for a given controller path and updates the `SelectedControllerDetails` property.
-    /// </summary>
-    /// <param name="ustPath">The path to the controller's "ust.xml" folder.</param>
-    private async Task LoadControllerDetailsAsync(string ustPath)
-    {
-        try
-        {
-            // Use the service to fetch details and update the UI-bound property.
-            SelectedControllerDetails = await _controllerDetailService.GetControllerDetailsAsync(ustPath);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error loading controller details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            SelectedControllerDetails = null; // Clear details on an error.
-        }
-    }
-    
     /// <summary>
     /// Opens the source Log.xml file for a given event using the default system application.
     /// </summary>
@@ -481,13 +383,8 @@ private void ClearAnalysis()
     [RelayCommand]
     private void OpenLogFile(LogEvent? logEvent)
     {
-
         if (logEvent == null || string.IsNullOrWhiteSpace(logEvent.SourceFilePath))
         {
-            // --- START: Temporary Debugging Code ---
-            string pathValue = logEvent?.SourceFilePath ?? "The path is NULL";
-            MessageBox.Show($"Command is exiting early. The file path is: '{pathValue}'");
-            // --- END: Temporary Debugging Code ---
             return;
         }
 
@@ -508,6 +405,113 @@ private void ClearAnalysis()
         catch (Exception ex)
         {
             MessageBox.Show($"Could not open file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
+    //-------------------------------------------------------------------------
+    // Partial On...Changed Methods
+    //-------------------------------------------------------------------------
+
+    /// <summary>
+    /// This method is automatically called by the CommunityToolkit.Mvvm source generator
+    /// whenever the `SelectedSortOrder` property changes.
+    /// </summary>
+    /// <param name="value">The new value of the `SelectedSortOrder` property.</param>
+    partial void OnSelectedSortOrderChanged(SortOrder value)
+    {
+        SortAscending = value == SortOrder.KleinsteZuerst;
+        
+        if (StartAnalysisCommand.CanExecute(null))
+        {
+            StartAnalysisCommand.Execute(null);
+        }
+    }
+    
+    //-------------------------------------------------------------------------
+    // Private Helper Methods
+    //-------------------------------------------------------------------------
+
+    /// <summary>
+    /// Analyzes a single project directory, creates a `ProjectNode`, and populates it with its child `UstNode` controllers.
+    /// </summary>
+    /// <param name="path">The full path to the project directory.</param>
+    private void DisplayProjectAtPath(string path)
+    {
+        var projectSize = DiskAnalyzer.GetDiskSize(path);
+        ProjectNumber++;
+
+        var allUsts = DiskAnalyzer.GetAllUstPathsUnderSubtree(path);
+        var filteredUsts = allUsts.Where(p => p.StartsWith(path, StringComparison.OrdinalIgnoreCase));
+
+        var sortedUsts = SortAscending
+            ? filteredUsts.OrderBy(DiskAnalyzer.GetDiskSize)
+            : filteredUsts.OrderByDescending(DiskAnalyzer.GetDiskSize);
+
+        var projectNode = new ProjectNode
+        {
+            Path = path,
+            FormattedSize = DiskAnalyzer.FormatSize(projectSize),
+            TextColor = ColorProvider.GetProjectCategoryColor(DiskAnalyzer.GetPercentage(projectSize, WorkspaceSize)),
+            Usts = sortedUsts.Select(ustPath =>
+            {
+                var ustSize = DiskAnalyzer.GetDiskSize(ustPath);
+                var ustNode = new UstNode
+                {
+                    Path = ustPath,
+                    FormattedSize = DiskAnalyzer.FormatSize(ustSize),
+                    Percentage = DiskAnalyzer.GetPercentage(ustSize, projectSize),
+                    TextColor = ColorProvider.GetUstCategoryColor(DiskAnalyzer.GetPercentage(ustSize, projectSize))
+                };
+                ustNode.PropertyChanged += Node_PropertyChanged;
+                return ustNode;
+            }).ToList()
+        };
+
+        projectNode.PropertyChanged += Node_PropertyChanged;
+        ControllerNumber += projectNode.Usts.Count;
+        PrjNodes.Add(projectNode);
+    }
+    
+    /// <summary>
+    /// Event handler for the `PropertyChanged` event on `ProjectNode` and `UstNode` objects.
+    /// It primarily handles changes to the `IsSelected` property to manage UI selection.
+    /// </summary>
+    private void Node_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(NodeBase.IsSelected))
+        {
+            return;
+        }
+
+        if (sender is NodeBase { IsSelected: true } newlySelectedNode)
+        {
+            if (_currentlySelectedNode != null && _currentlySelectedNode != newlySelectedNode)
+            {
+                _currentlySelectedNode.IsSelected = false;
+            }
+            _currentlySelectedNode = newlySelectedNode;
+
+            if (newlySelectedNode is UstNode ustNode)
+            {
+                _ = LoadControllerDetailsAsync(ustNode.Path);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Asynchronously loads detailed information for a given controller path and updates the `SelectedControllerDetails` property.
+    /// </summary>
+    /// <param name="ustPath">The path to the controller's "ust.xml" folder.</param>
+    private async Task LoadControllerDetailsAsync(string ustPath)
+    {
+        try
+        {
+            SelectedControllerDetails = await _controllerDetailService.GetControllerDetailsAsync(ustPath);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading controller details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            SelectedControllerDetails = null;
         }
     }
 }
