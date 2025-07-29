@@ -30,6 +30,39 @@
           "Microsoft.WindowsDesktop.App.WPF"
         ]
       },
+      "MaterialDesignColors/5.2.2-ci998": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/MaterialDesignColors.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/MaterialDesignColors.dll": {
+            "related": ".pdb"
+          }
+        }
+      },
+      "MaterialDesignThemes/5.2.2-ci998": {
+        "type": "package",
+        "dependencies": {
+          "MaterialDesignColors": "5.2.2-ci998",
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.39"
+        },
+        "compile": {
+          "lib/net8.0/MaterialDesignThemes.Wpf.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/MaterialDesignThemes.Wpf.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "build": {
+          "build/MaterialDesignThemes.targets": {}
+        }
+      },
       "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
         "type": "package",
         "compile": {
@@ -105,6 +138,68 @@
         "lib/net6.0-windows7.0/DotNetProjects.DataVisualization.Toolkit.dll"
       ]
     },
+    "MaterialDesignColors/5.2.2-ci998": {
+      "sha512": "GOcZo90EPpnmiUbUOxmC70CiOmIbEN6GpGZkCMHYFpll9lW0aEhOWYVblCJcz9n7VQ2iCwVTIRLVWmaVJXneHQ==",
+      "type": "package",
+      "path": "materialdesigncolors/5.2.2-ci998",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "docs/README.md",
+        "images/MaterialDesignColors.Icon.png",
+        "lib/net462/MaterialDesignColors.dll",
+        "lib/net462/MaterialDesignColors.pdb",
+        "lib/net6.0/MaterialDesignColors.dll",
+        "lib/net6.0/MaterialDesignColors.pdb",
+        "lib/net8.0/MaterialDesignColors.dll",
+        "lib/net8.0/MaterialDesignColors.pdb",
+        "materialdesigncolors.5.2.2-ci998.nupkg.sha512",
+        "materialdesigncolors.nuspec"
+      ]
+    },
+    "MaterialDesignThemes/5.2.2-ci998": {
+      "sha512": "91ipMgC/FhWIZIx1P2IUHWLLIdRO29+HekEn7EZY9VV6RWhZEMc7iktjKF8mF3yYkPWLXfTGufqrrAR+INdONA==",
+      "type": "package",
+      "path": "materialdesignthemes/5.2.2-ci998",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/MaterialDesignThemes.targets",
+        "build/Resources/Roboto/Roboto-Black.ttf",
+        "build/Resources/Roboto/Roboto-BlackItalic.ttf",
+        "build/Resources/Roboto/Roboto-Bold.ttf",
+        "build/Resources/Roboto/Roboto-BoldItalic.ttf",
+        "build/Resources/Roboto/Roboto-Italic.ttf",
+        "build/Resources/Roboto/Roboto-Light.ttf",
+        "build/Resources/Roboto/Roboto-LightItalic.ttf",
+        "build/Resources/Roboto/Roboto-Medium.ttf",
+        "build/Resources/Roboto/Roboto-MediumItalic.ttf",
+        "build/Resources/Roboto/Roboto-Regular.ttf",
+        "build/Resources/Roboto/Roboto-Thin.ttf",
+        "build/Resources/Roboto/Roboto-ThinItalic.ttf",
+        "build/Resources/Roboto/RobotoCondensed-Bold.ttf",
+        "build/Resources/Roboto/RobotoCondensed-BoldItalic.ttf",
+        "build/Resources/Roboto/RobotoCondensed-Italic.ttf",
+        "build/Resources/Roboto/RobotoCondensed-Light.ttf",
+        "build/Resources/Roboto/RobotoCondensed-LightItalic.ttf",
+        "build/Resources/Roboto/RobotoCondensed-Regular.ttf",
+        "docs/README.md",
+        "images/MaterialDesignThemes.Icon.png",
+        "lib/net462/MaterialDesignThemes.Wpf.dll",
+        "lib/net462/MaterialDesignThemes.Wpf.pdb",
+        "lib/net462/MaterialDesignThemes.Wpf.xml",
+        "lib/net6.0/MaterialDesignThemes.Wpf.dll",
+        "lib/net6.0/MaterialDesignThemes.Wpf.pdb",
+        "lib/net6.0/MaterialDesignThemes.Wpf.xml",
+        "lib/net8.0/MaterialDesignThemes.Wpf.dll",
+        "lib/net8.0/MaterialDesignThemes.Wpf.pdb",
+        "lib/net8.0/MaterialDesignThemes.Wpf.xml",
+        "materialdesignthemes.5.2.2-ci998.nupkg.sha512",
+        "materialdesignthemes.nuspec",
+        "tools/VisualStudioToolsManifest.xml"
+      ]
+    },
     "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
       "sha512": "r8qBEXmQfORso2+MVHnt8PSH4761zJ0SIxgQTSEDVLU97EN2FZdG6/ZCYUPhQy+OrPKgnpYBCAs3PS6Bs7wRsg==",
       "type": "package",
@@ -132,6 +227,8 @@
     "net9.0-windows7.0": [
       "CommunityToolkit.Mvvm >= 8.4.0",
       "DotNetProjects.WpfToolkit.DataVisualization >= 6.1.94",
+      "MaterialDesignColors >= 5.2.2-ci998",
+      "MaterialDesignThemes >= 5.2.2-ci998",
       "Microsoft.Xaml.Behaviors.Wpf >= 1.1.135"
     ]
   },
@@ -185,6 +282,14 @@
           "DotNetProjects.WpfToolkit.DataVisualization": {
             "target": "Package",
             "version": "[6.1.94, )"
+          },
+          "MaterialDesignColors": {
+            "target": "Package",
+            "version": "[5.2.2-ci998, )"
+          },
+          "MaterialDesignThemes": {
+            "target": "Package",
+            "version": "[5.2.2-ci998, )"
           },
           "Microsoft.Xaml.Behaviors.Wpf": {
             "target": "Package",

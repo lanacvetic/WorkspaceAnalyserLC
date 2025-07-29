@@ -7,7 +7,8 @@
         xmlns:converters="clr-namespace:WorkspaceAnalyser.Converters"
         xmlns:workspaceAnalyser="clr-namespace:WorkspaceAnalyser"
         mc:Ignorable="d"
-        Title="Projektanalyse" Height="700" Width="1000"
+        Title="Projektanalyse" 
+        Height="700" Width="1000"
         Background="#FAFAFA"
         FontFamily="Segoe UI" FontSize="14">
 
@@ -19,60 +20,36 @@
         <DataTemplate DataType="{x:Type models:UstNode}">
             <TextBlock Text="{Binding Display}" Foreground="{Binding TextColor}" />
         </DataTemplate>
+
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-        
-        <Style x:Key="MaterialSymbolIcon" TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Material Symbols Rounded Thin" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
     </Window.Resources>
 
-
     <TabControl>
+        
         <TabItem Header="Suchen">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-
                 <StackPanel Margin="20">
 
-
-                    <!-- Title -->
-
-                    <TextBlock Text="Workspace Analyser" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"
-                               Foreground="#2E3A59" />
-
-                    <Label x:Name="DisplayNum" />
-
-                    <!-- Root Path Input Section -->
+                    <TextBlock Text="Workspace Analyser" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2E3A59" />
 
                     <Border Background="#F0F0F0" Padding="15" CornerRadius="10" Margin="0,0,0,15">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBox Text="{Binding ProjectViewPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox Text="{Binding ProjectViewPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="400">
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding StartAnalysisCommand}" />
                                 </TextBox.InputBindings>
                             </TextBox>
-
-                            <Button Content="Analyse starten"
-                                    Command="{Binding StartAnalysisCommand}" />
+                            <Button Content="Analyse starten" Command="{Binding StartAnalysisCommand}" Margin="10,0,0,0"/>
                         </StackPanel>
-
                     </Border>
-
-
-                    <!-- Sorting Option -->
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                         <TextBlock Text="Sortierreihenfolge:" VerticalAlignment="Center" Margin="0,0,10,0" />
-                        <ComboBox SelectedValue="{Binding SelectedSortOrder, Mode=TwoWay}"
-                                  SelectedValuePath="Tag">
-                            <ComboBoxItem Tag="{x:Static workspaceAnalyser:SortOrder.KleinsteZuerst}">Kleinste zuerst</ComboBoxItem>
-                            <ComboBoxItem Tag="{x:Static workspaceAnalyser:SortOrder.GroessteZuerst}">Größte zuerst</ComboBoxItem>
+                        <ComboBox SelectedValue="{Binding SelectedSortOrder, Mode=TwoWay}" SelectedValuePath="Tag">
+                            <ComboBoxItem Tag="{x:Static workspaceAnalyser:SortOrder.KleinsteZuerst}" Content="Kleinste zuerst"/>
+                            <ComboBoxItem Tag="{x:Static workspaceAnalyser:SortOrder.GroessteZuerst}" Content="Größte zuerst"/>
                         </ComboBox>
-
                     </StackPanel>
-
-                    <!-- Output Section   -->
 
                     <TreeView x:Name="ProjectsTreeView" Margin="0,10,0,0" ItemsSource="{Binding PrjNodes}">
                         <TreeView.ItemContainerStyle>
@@ -80,23 +57,19 @@
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             </Style>
                         </TreeView.ItemContainerStyle>
-
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type models:ProjectNode}" ItemsSource="{Binding Usts}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
-                                            CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
-                                        <TextBlock Style="{StaticResource MaterialSymbolIcon}" Text="folder" />
+                                    <Button Command="{Binding DataContext.OpenProjectFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                                        <Image Source="/Assets/folder.png" Width="16" Height="16" />
                                     </Button>
                                     <TextBlock Text="{Binding Display}" FontWeight="Bold" Foreground="{Binding TextColor}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
-
                             <DataTemplate DataType="{x:Type models:UstNode}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" 
-                                            CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
-                                        <TextBlock Style="{StaticResource MaterialSymbolIcon}" Text="folder" />
+                                    <Button Command="{Binding DataContext.OpenUstFolderCommand, RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}" Margin="0,0,5,0" Padding="3,0" Background="Transparent" BorderThickness="0">
+                                        <Image Source="/Assets/folder.png" Width="16" Height="16" />
                                     </Button>
                                     <TextBlock Text="{Binding Display}" FontStyle="Italic" Foreground="{Binding TextColor}" VerticalAlignment="Center"/>
                                 </StackPanel>
@@ -106,105 +79,83 @@
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
+
         <TabItem Header="Müll">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />       <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />       <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Mülldateien"
-                           Grid.Row="0"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           Margin="0,0,0,20"
-                           Foreground="#2E3A59" />
-
-                <Button Content="Für Mülldateien suchen"
-                        Grid.Row="1"
-                        FontStyle="Italic"
-                        BorderThickness="0"
-                        Command="{Binding ScanForJunkFilesCommand}"
-                        Margin="0,0,0,10" />
-                <Button Content="Alle Mülldateien löschen"
-                        Grid.Row="2" FontStyle="Italic"
-                        BorderThickness="0"
-                        Background="#FF5733" Foreground="White"
-                        Command="{Binding DeleteJunkFilesCommand}" />
-                <ListBox x:Name="JunkFilesListBox"
-                         Grid.Row="3" HorizontalContentAlignment="Stretch"
-                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         ItemsSource="{Binding JunkFiles}"
-                         Margin="0,10,0,0" />
+                <TextBlock Text="Mülldateien" Grid.Row="0" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2E3A59" />
+                <Button Content="Für Mülldateien suchen" Grid.Row="1" Command="{Binding ScanForJunkFilesCommand}" Margin="0,0,0,10" />
+                <Button Grid.Row="2" Background="#FF5733" Foreground="White" Command="{Binding DeleteJunkFilesCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/delete.png" Height="16" Width="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Alle Mülldateien löschen" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <ListBox x:Name="JunkFilesListBox" Grid.Row="3" ItemsSource="{Binding JunkFiles}" Margin="0,10,0,0" />
             </Grid>
         </TabItem>
 
-<TabItem Header="Kontroller-Daten">
-    <Grid Margin="10"
-          DataContext="{Binding SelectedControllerDetails}"
-          Visibility="{Binding SelectedControllerDetails, Converter={StaticResource NullToVisibilityConverter}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="*" />   </Grid.RowDefinitions>
+        <TabItem Header="Kontroller-Daten">
+            <Grid Margin="10" DataContext="{Binding SelectedControllerDetails}" Visibility="{Binding SelectedControllerDetails, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="*" />   </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Pfad:" Grid.Row="0" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding Path}" Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="Pfad:"                   Grid.Row="0" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding Path}"          Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" TextWrapping="Wrap"/>
+                
+                <TextBlock Text="Anzahl Makros:"        Grid.Row="1" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding AnzahlMakros}"  Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="Anzahl Makros:" Grid.Row="1" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding AnzahlMakros}" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="Anzahl FUP-Blätter:"   Grid.Row="2" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding AnzahlFUPBlaetter}" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="Anzahl FUP-Blätter:" Grid.Row="2" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding AnzahlFUPBlaetter}" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="Hardwaretyp:"          Grid.Row="3" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding Hardwaretyp}"   Grid.Row="3" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="Hardwaretyp:" Grid.Row="3" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding Hardwaretyp}" Grid.Row="3" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="CP-Version:"           Grid.Row="4" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding CPVersion}"     Grid.Row="4" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="CP-Version:" Grid.Row="4" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding CPVersion}" Grid.Row="4" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="IP-Adresse:"           Grid.Row="5" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <TextBlock Text="{Binding IPAdresse}"     Grid.Row="5" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="IP-Adresse:" Grid.Row="5" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <TextBlock Text="{Binding IPAdresse}" Grid.Row="5" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="Übersetzt:"            Grid.Row="6" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
+                <CheckBox IsChecked="{Binding Uebersetzt}" IsEnabled="False" Grid.Row="6" Grid.Column="1" Margin="0,0,0,5" />
 
-        <TextBlock Text="Übersetzt:" Grid.Row="6" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" />
-        <CheckBox IsChecked="{Binding Uebersetzt}" IsEnabled="False" Grid.Row="6" Grid.Column="1" Margin="0,0,0,5" />
+                <TextBlock Text="Übersetzungstext:"     Grid.Row="7" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" VerticalAlignment="Top" />
+                <TextBlock Text="{Binding Uebersetzungstext}" Grid.Row="7" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Top" />
 
-        <TextBlock Text="Übersetzungstext:" Grid.Row="7" Grid.Column="0" FontWeight="Bold" Margin="0,0,10,5" VerticalAlignment="Top" />
-        <TextBlock Text="{Binding Uebersetzungstext}" Grid.Row="7" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Top" />
-
-        <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0,10" />
-
-        <TextBlock Text="Event Log:" Grid.Row="9" Grid.Column="0" FontWeight="Bold" Margin="0,2,10,5" VerticalAlignment="Top" />
-        <ListBox Grid.Row="9" Grid.Column="1"
-                 ItemsSource="{Binding Events}"
-                 HorizontalContentAlignment="Stretch">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="140"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="{Binding Date}" Opacity="0.8" VerticalAlignment="Top"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="Wrap" />
-
-                        <Button Grid.Column="2" 
-                                Content="Open Log" 
-                                Margin="10,0,0,0" 
-                                Padding="5,1"
-                                Command="{Binding DataContext.OpenLogFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        </Grid>
-</TabItem>
+                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0,10" />
+                
+                <TextBlock Text="Event Log:" Grid.Row="9" Grid.Column="0" FontWeight="Bold" Margin="0,2,10,5" VerticalAlignment="Top" />
+                <ListBox Grid.Row="9" Grid.Column="1" ItemsSource="{Binding Events}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Date}" Opacity="0.8" VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="Wrap" />
+                                <Button Grid.Column="2" Content="Open Log" Margin="10,0,0,0" Padding="5,1" Command="{Binding DataContext.OpenLogFileCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        
     </TabControl>
 
 </Window>

@@ -11,7 +11,16 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
         <PackageReference Include="DotNetProjects.WpfToolkit.DataVisualization" Version="6.1.94"/>
+        <PackageReference Include="MaterialDesignColors" Version="5.2.2-ci998" />
+        <PackageReference Include="MaterialDesignThemes" Version="5.2.2-ci998" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Assets\folder.png" />
+      <Resource Include="Assets\folder.png" />
+      <None Remove="Assets\delete.png" />
+      <Resource Include="Assets\delete.png" />
     </ItemGroup>
 
 </Project>

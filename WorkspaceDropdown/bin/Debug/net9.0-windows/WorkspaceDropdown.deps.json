@@ -9,6 +9,8 @@
       "WorkspaceDropdown/1.0.0": {
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.4.0",
+          "MaterialDesignColors": "5.2.2-ci998",
+          "MaterialDesignThemes": "5.2.2-ci998",
           "Microsoft.Xaml.Behaviors.Wpf": "1.1.135"
         },
         "runtime": {
@@ -20,6 +22,26 @@
           "lib/net8.0/CommunityToolkit.Mvvm.dll": {
             "assemblyVersion": "8.4.0.0",
             "fileVersion": "8.4.0.1"
+          }
+        }
+      },
+      "MaterialDesignColors/5.2.2-ci998": {
+        "runtime": {
+          "lib/net8.0/MaterialDesignColors.dll": {
+            "assemblyVersion": "5.2.2.0",
+            "fileVersion": "5.2.2.0"
+          }
+        }
+      },
+      "MaterialDesignThemes/5.2.2-ci998": {
+        "dependencies": {
+          "MaterialDesignColors": "5.2.2-ci998",
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.135"
+        },
+        "runtime": {
+          "lib/net8.0/MaterialDesignThemes.Wpf.dll": {
+            "assemblyVersion": "5.2.2.0",
+            "fileVersion": "5.2.2.0"
           }
         }
       },
@@ -45,6 +67,20 @@
       "sha512": "sha512-tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
       "path": "communitytoolkit.mvvm/8.4.0",
       "hashPath": "communitytoolkit.mvvm.8.4.0.nupkg.sha512"
+    },
+    "MaterialDesignColors/5.2.2-ci998": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GOcZo90EPpnmiUbUOxmC70CiOmIbEN6GpGZkCMHYFpll9lW0aEhOWYVblCJcz9n7VQ2iCwVTIRLVWmaVJXneHQ==",
+      "path": "materialdesigncolors/5.2.2-ci998",
+      "hashPath": "materialdesigncolors.5.2.2-ci998.nupkg.sha512"
+    },
+    "MaterialDesignThemes/5.2.2-ci998": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-91ipMgC/FhWIZIx1P2IUHWLLIdRO29+HekEn7EZY9VV6RWhZEMc7iktjKF8mF3yYkPWLXfTGufqrrAR+INdONA==",
+      "path": "materialdesignthemes/5.2.2-ci998",
+      "hashPath": "materialdesignthemes.5.2.2-ci998.nupkg.sha512"
     },
     "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
       "type": "package",

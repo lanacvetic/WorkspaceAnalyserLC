@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "5zoJuxHdE5s=",
+  "dgSpecHash": "Rdy/b8Gb4g4=",
   "success": true,
   "projectFilePath": "C:\\Users\\lcvetic\\RiderProjects\\WorkspaceAnalyser - Kopie\\WorkspaceAnalyser\\WorkspaceAnalyser.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lcvetic\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\lcvetic\\.nuget\\packages\\dotnetprojects.wpftoolkit.datavisualization\\6.1.94\\dotnetprojects.wpftoolkit.datavisualization.6.1.94.nupkg.sha512",
+    "C:\\Users\\lcvetic\\.nuget\\packages\\materialdesigncolors\\5.2.2-ci998\\materialdesigncolors.5.2.2-ci998.nupkg.sha512",
+    "C:\\Users\\lcvetic\\.nuget\\packages\\materialdesignthemes\\5.2.2-ci998\\materialdesignthemes.5.2.2-ci998.nupkg.sha512",
     "C:\\Users\\lcvetic\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.135\\microsoft.xaml.behaviors.wpf.1.1.135.nupkg.sha512"
   ],
   "logs": []

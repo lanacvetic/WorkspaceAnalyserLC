@@ -41,3 +41,5 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\D
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\WorkspaceDropdown.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\obj\Debug\net9.0-windows\ref\WorkspaceDropdown.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignColors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceDropdown\bin\Debug\net9.0-windows\MaterialDesignThemes.Wpf.dll

@@ -32,3 +32,5 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\De
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\WorkspaceConsole.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\obj\Debug\net9.0\ref\WorkspaceConsole.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignColors.dll
+C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceConsole\bin\Debug\net9.0\MaterialDesignThemes.Wpf.dll
