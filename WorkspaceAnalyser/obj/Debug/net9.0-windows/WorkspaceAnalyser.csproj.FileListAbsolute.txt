@@ -50,6 +50,3 @@ C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\D
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.pdb
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\WorkspaceAnalyser.genruntimeconfig.cache
 C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\ref\WorkspaceAnalyser.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\MaterialDesignColors.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\bin\Debug\net9.0-windows\MaterialDesignThemes.Wpf.dll
-C:\Users\lcvetic\RiderProjects\WorkspaceAnalyser - Kopie\WorkspaceAnalyser\obj\Debug\net9.0-windows\App.baml
