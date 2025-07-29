@@ -88,6 +88,11 @@ public partial class MainViewModel : ObservableObject
     /// The total size of the analyzed workspace directory, in bytes.
     /// </summary>
     [ObservableProperty] private double _workspaceSize;
+    /// <summary>
+    /// A flag to indicate if the junk file scan is currently running.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isScanning;
 
     //-------------------------------------------------------------------------
     // Constructor
@@ -201,6 +206,21 @@ private void StartAnalysis()
     }
 }
 
+/// <summary>
+/// Clears the current analysis results from the view.
+/// </summary>
+[RelayCommand]
+private void ClearAnalysis()
+{
+    PrjNodes.Clear();
+    JunkFiles.Clear();
+    ProjectNumber = 0;
+    ControllerNumber = 0;
+    SelectedControllerDetails = null;
+    _currentlySelectedNode = null;
+    ProjectViewPath = string.Empty; // Add this line to clear the search box
+}
+
     /// <summary>
     /// Opens the selected project's folder in Windows Explorer.
     /// Triggered by a button on a project item in the UI.
@@ -242,7 +262,10 @@ private void StartAnalysis()
             MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-
+        
+        JunkFiles.Clear();
+        IsScanning = true; // Show the "Scanning..." message
+        
         try
         {
             // Use the junk file scanner service to find files.
@@ -255,6 +278,10 @@ private void StartAnalysis()
         catch (Exception ex)
         {
             MessageBox.Show($"Error scanning for junk files:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsScanning = false; // Hide the "Scanning..." message
         }
     }
 

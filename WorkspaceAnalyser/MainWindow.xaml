@@ -22,6 +22,7 @@
         </DataTemplate>
 
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
 
     <TabControl>
@@ -39,7 +40,14 @@
                                     <KeyBinding Key="Enter" Command="{Binding StartAnalysisCommand}" />
                                 </TextBox.InputBindings>
                             </TextBox>
-                            <Button Content="Analyse starten" Command="{Binding StartAnalysisCommand}" Margin="10,0,0,0"/>
+                            <Button Content="Analyse starten" 
+                                    Command="{Binding StartAnalysisCommand}" 
+                                    Margin="10,0,0,0"/>
+
+                            <Button Content="Clear" 
+                                    Command="{Binding ClearAnalysisCommand}" 
+                                    Margin="5,0,0,0" />
+                            
                         </StackPanel>
                     </Border>
 
@@ -86,6 +94,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -97,7 +106,13 @@
                         <TextBlock Text="Alle Mülldateien löschen" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <ListBox x:Name="JunkFilesListBox" Grid.Row="3" ItemsSource="{Binding JunkFiles}" Margin="0,10,0,0" />
+                <TextBlock Text="Mülldateien werden geladen..." 
+                           Grid.Row="3" 
+                           FontStyle="Italic" 
+                           Opacity="0.7"
+                           Margin="0,5,0,5"
+                           Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}"/>
+                <ListBox x:Name="JunkFilesListBox" Grid.Row="4" ItemsSource="{Binding JunkFiles}" Margin="0,10,0,0" />
             </Grid>
         </TabItem>
 
