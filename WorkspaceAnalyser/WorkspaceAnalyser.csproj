@@ -26,6 +26,8 @@
       <Resource Include="Assets\copy.png" />
       <None Remove="Assets\iconfile.ico" />
       <Resource Include="Assets\app.ico" />
+      <None Remove="Assets\list.png" />
+      <Resource Include="Assets\list.png" />
     </ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WorkspaceAnalyser")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a92e3d4f1f78fd2543b89bd41e18459e28ea7edf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bdfac68edd1cb7ddc1defbff477923e576f8ffac")]
 [assembly: System.Reflection.AssemblyProductAttribute("WorkspaceAnalyser")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WorkspaceAnalyser")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
