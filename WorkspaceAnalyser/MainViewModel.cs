@@ -331,12 +331,13 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not read directory contents: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Could not read directory contents: {ex.Message}", "Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
 
         FilterControllerContent();
     }
-    
+
 
     /// <summary>
     /// Scans the workspace directory for temporary or junk files asynchronously.
@@ -493,7 +494,7 @@ public partial class MainViewModel : ObservableObject
             StartAnalysisCommand.Execute(null);
         }
     }
-    
+
     partial void OnControllerContentFilterChanged(string value)
     {
         FilterControllerContent();
@@ -502,7 +503,7 @@ public partial class MainViewModel : ObservableObject
     //-------------------------------------------------------------------------
     // Private Helper Methods
     //-------------------------------------------------------------------------
-    
+
     private void FilterControllerContent()
     {
         DisplayedControllerContent.Clear();
@@ -516,10 +517,10 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            var filteredItems = _masterControllerContent.Where(item => 
+            var filteredItems = _masterControllerContent.Where(item =>
                 item.Length > 2 &&
                 item.Substring(2).StartsWith(ControllerContentFilter, StringComparison.OrdinalIgnoreCase));
-            
+
             foreach (var item in filteredItems)
             {
                 DisplayedControllerContent.Add(item);
