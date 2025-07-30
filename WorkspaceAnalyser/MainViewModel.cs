@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -39,6 +39,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IControllerDetailService _controllerDetailService;
     private readonly IJunkFileScanner _junkFileScanner;
 
+    
     //-------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------
@@ -147,7 +148,7 @@ public partial class MainViewModel : ObservableObject
         // Validate the input path.
         if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
         {
-            MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Die Quelldatei konnte unter folgendem Pfad nicht gefunden werden!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -191,7 +192,7 @@ public partial class MainViewModel : ObservableObject
             var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
             if (!allPrjPaths.Any())
             {
-                MessageBox.Show("No valid project (prj.xml) or controller (ust.xml) found at this path!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Kein gültiges Projekt (prj.xml) oder Controller (ust.xml) unter diesem Pfad gefunden!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -213,7 +214,7 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error saving analysis JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Fehler beim Speichern der Analyse-JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -274,7 +275,7 @@ public partial class MainViewModel : ObservableObject
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not copy path to clipboard: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Pfad konnte nicht in die Zwischenablage kopiert werden: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
@@ -287,7 +288,7 @@ public partial class MainViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
         {
-            MessageBox.Show("The entered path does not exist or is empty!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Der eingegebene Pfad existiert nicht oder ist leer!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
         
@@ -304,7 +305,7 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error scanning for junk files:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Fehler beim Suchen nach Mülldateien:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
@@ -320,13 +321,13 @@ public partial class MainViewModel : ObservableObject
     {
         if (!JunkFiles.Any())
         {
-            MessageBox.Show("No junk files found to delete. Please scan first.", "Nothing to Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Keine Mülldateien zum Löschen gefunden. Bitte zuerst scannen.", "Nichts zu löschen", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         var confirmResult = MessageBox.Show(
-            $"Are you sure you want to PERMANENTLY delete {JunkFiles.Count} file(s)?\n\nThis action CANNOT be undone.",
-            "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            $"Sind Sie sicher, dass Sie {JunkFiles.Count} Datei(en) DAUERHAFT löschen möchten?\n\nDiese Aktion kann nicht rückgängig gemacht werden.",
+            "Löschen bestätige", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
 
         if (confirmResult != MessageBoxResult.Yes) return;
 
@@ -363,14 +364,14 @@ public partial class MainViewModel : ObservableObject
             var summary = new StringBuilder("Deletion complete.\n\n");
             if (failedToDeleteFiles.Any())
             {
-                summary.AppendLine($"{successfullyDeletedFiles.Count} file(s) successfully deleted.");
-                summary.AppendLine($"{failedToDeleteFiles.Count} file(s) failed to delete:");
+                summary.AppendLine($"{successfullyDeletedFiles.Count} Datei(en) erfolgreich gelösch.");
+                summary.AppendLine($"{failedToDeleteFiles.Count} Datei(en) konnten nicht gelöscht werden:");
                 summary.Append(string.Join("\n", failedToDeleteFiles));
-                MessageBox.Show(summary.ToString(), "Deletion Results - With Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(summary.ToString(), "Deletion Results - Mit Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
-                summary.Append("All selected junk files were successfully deleted!");
+                summary.Append("Alle ausgewählten Mülldateien wurden erfolgreich gelöscht!");
                 MessageBox.Show(summary.ToString(), "Deletion Results", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         });
@@ -404,7 +405,7 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not open file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Error loading controller details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
     
@@ -510,7 +511,7 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error loading controller details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Fehler beim Laden der Controller-Details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             SelectedControllerDetails = null;
         }
     }

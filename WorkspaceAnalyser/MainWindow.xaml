@@ -44,7 +44,7 @@
                                     Command="{Binding StartAnalysisCommand}" 
                                     Margin="10,0,0,0"/>
 
-                            <Button Content="Clear" 
+                            <Button Content="Löschen" 
                                     Command="{Binding ClearAnalysisCommand}" 
                                     Margin="5,0,0,0" />
                             
@@ -131,10 +131,10 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Settings">
+        <TabItem Header="Einstellung">
             <StackPanel Margin="20">
-                <TextBlock Text="Junk File Settings" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
-                <TextBlock Text="Select which file patterns to include in the junk file scan:" Margin="0,0,0,10" />
+                <TextBlock Text="Mülldatei Einstellungen" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
+                <TextBlock Text="Dateimuster für den Datenmüll-Scan auswählen:" Margin="0,0,0,10" />
 
                 <Border Background="#F0F0F0" Padding="15" CornerRadius="10">
                     <ListBox ItemsSource="{Binding JunkFilePatterns}" Background="Transparent" BorderThickness="0">
