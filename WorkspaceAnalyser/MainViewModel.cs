@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -307,7 +308,7 @@ public partial class MainViewModel : ObservableObject
     private void ShowControllerContent(UstNode? ustNode)
     {
         _masterControllerContent.Clear();
-        ControllerContentFilter = string.Empty;
+        ControllerContentFilter = string.Empty; // Reset search text
 
         if (ustNode == null || !Directory.Exists(ustNode.Path))
         {
@@ -331,11 +332,10 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not read directory contents: {ex.Message}", "Error", MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            MessageBox.Show($"Could not read directory contents: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        FilterControllerContent();
+        FilterControllerContent(); 
     }
 
 
@@ -499,11 +499,10 @@ public partial class MainViewModel : ObservableObject
     {
         FilterControllerContent();
     }
+    
 
-    //-------------------------------------------------------------------------
-    // Private Helper Methods
-    //-------------------------------------------------------------------------
-
+    // --- Private Helper Methods ---
+    
     private void FilterControllerContent()
     {
         DisplayedControllerContent.Clear();
@@ -517,10 +516,10 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            var filteredItems = _masterControllerContent.Where(item =>
+            var filteredItems = _masterControllerContent.Where(item => 
                 item.Length > 2 &&
-                item.Substring(2).StartsWith(ControllerContentFilter, StringComparison.OrdinalIgnoreCase));
-
+                item.Substring(2).Contains(ControllerContentFilter, StringComparison.OrdinalIgnoreCase));
+            
             foreach (var item in filteredItems)
             {
                 DisplayedControllerContent.Add(item);
