@@ -33,7 +33,10 @@ public class ControllerDetailService : IControllerDetailService
                 details.AnzahlMakros = utfFiles.Count(utf => File.Exists(Path.ChangeExtension(utf, ".u"))).ToString();
                 details.AnzahlFUPBlaetter = (utfFiles.Length - int.Parse(details.AnzahlMakros)).ToString();
             }
-            catch { /* Ignore errors if files can't be accessed */ }
+            catch
+            {
+                /* Ignore errors if files can't be accessed */
+            }
 
 
             // --- 2. Read Data from upl/ldopen.xml ---
@@ -47,7 +50,10 @@ public class ControllerDetailService : IControllerDetailService
                     details.CPVersion = xDoc.Root?.Element("Version")?.Value ?? "N/A";
                     details.IPAdresse = xDoc.Root?.Element("IP")?.Value ?? "N/A";
                 }
-                catch { details.Hardwaretyp = "Error reading XML"; }
+                catch
+                {
+                    details.Hardwaretyp = "Error reading XML";
+                }
             }
 
 
@@ -91,10 +97,61 @@ public class ControllerDetailService : IControllerDetailService
                         ));
                     events.AddRange(pluginEvents);
                 }
+
                 details.Events = events.OrderByDescending(e => e.Date).ToList();
             }
-            catch { details.Events = []; } // Assign an empty list on error
-            
+            catch
+            {
+                details.Events = [];
+            } // Assign an empty list on error
+
+   var mainLogPath = Path.Combine(ustPath, "log.xml");
+        if (File.Exists(mainLogPath))
+        {
+            try
+            {
+                var xDoc = XDocument.Load(mainLogPath);
+                var logSections = new List<LogSection>();
+
+                var logDatei = xDoc.Element("LogDatei");
+                if (logDatei != null)
+                {
+                    // Loop through each main section like <fup_xl.exe>
+                    foreach (var sectionElement in logDatei.Elements())
+                    {
+                        var sectionName = sectionElement.Name.LocalName;
+                        var entries = new List<LogEntry>();
+
+                        // This is the crucial part: We now look at ALL descendants (children, grandchildren, etc.)
+                        // This will find all action tags, no matter how deeply nested they are.
+                        foreach (var entryElement in sectionElement.Descendants())
+                        {
+                            // We only process elements that have a <Datum> child, as these are the actual events.
+                            if (entryElement.Element("Datum") != null)
+                            {
+                                var action = entryElement.Name.LocalName;
+                                var date = entryElement.Element("Datum")?.Value ?? "No Date";
+                                var entryDetails = entryElement.Element("Name")?.Value ?? entryElement.Element("Info")?.Value ?? "N/A";
+
+                                entries.Add(new LogEntry(action, date, entryDetails));
+                            }
+                        }
+                        
+                        // Only add sections that actually contain valid entries
+                        if (entries.Any())
+                        {
+                            logSections.Add(new LogSection(sectionName, entries));
+                        }
+                    }
+                }
+                details.StructuredLog = logSections;
+            }
+            catch
+            {
+                details.StructuredLog = new List<LogSection>();
+            }
+        }
+
             return details;
         });
     }

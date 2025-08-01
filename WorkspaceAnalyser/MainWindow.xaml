@@ -135,8 +135,25 @@
                                  Text="{Binding ControllerContentFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,10" />
                         <Border Grid.Row="1" Background="#F0F0F0" CornerRadius="10" Padding="5">
-                            <ListBox ItemsSource="{Binding DisplayedControllerContent}" Background="Transparent"
-                                     BorderThickness="0" FontSize="12" />
+                            <ListBox ItemsSource="{Binding DisplayedControllerContent}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     FontSize="12">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button
+                                            Command="{Binding DataContext.OpenContentFileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                            CommandParameter="{Binding}"
+                                            Foreground="Black"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            HorizontalContentAlignment="Left">
+                                            <!-- Tell the button to display the 'DisplayName' property -->
+                                            <TextBlock Text="{Binding DisplayName}" />
+                                        </Button>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </Border>
                     </Grid>
                 </Grid>
@@ -260,6 +277,41 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Log Viewer"
+                 IsEnabled="{Binding SelectedControllerDetails, Converter={StaticResource NullToVisibilityConverter}}">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <!-- Row for the dropdown -->
+                    <RowDefinition Height="Auto" /> <!-- Row for the label -->
+                    <RowDefinition Height="*" />    <!-- Row for the DataGrid -->
+                </Grid.RowDefinitions>
+
+                <!-- 1. Dropdown menu for selecting the log section -->
+                <ComboBox Grid.Row="0"
+                          ItemsSource="{Binding SelectedControllerDetails.StructuredLog}"
+                          SelectedItem="{Binding SelectedLogSection}"
+                          DisplayMemberPath="SectionName"
+                          Margin="0,0,0,10" />
+
+                <TextBlock Grid.Row="1" Text="Einträge im ausgewählten Abschnitt:" FontWeight="Bold" Margin="0,5,0,5" />
+
+                <!-- 2. DataGrid to display the entries of the selected section -->
+                <DataGrid Grid.Row="2"
+                          ItemsSource="{Binding SelectedLogEntries}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserSortColumns="True"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalScrollBarVisibility="Disabled">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Aktion" Binding="{Binding Action}" Width="Auto" />
+                        <DataGridTextColumn Header="Datum" Binding="{Binding Date}" Width="Auto" />
+                        <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
             </Grid>
         </TabItem>
 
