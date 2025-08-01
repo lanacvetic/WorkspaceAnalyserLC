@@ -14,6 +14,9 @@ using WorkspaceAnalyser.Utils;
 
 namespace WorkspaceAnalyser;
 
+/// <summary>
+/// Defines the sorting order for displaying projects.
+/// </summary>
 public enum SortOrder
 {
     KleinsteZuerst, // Smallest first
@@ -30,39 +33,104 @@ public partial class MainViewModel : ObservableObject
     // Fields
     //-------------------------------------------------------------------------
 
-    // --- Fields ---
     private NodeBase? _currentlySelectedNode;
     private readonly IAnalysisReportService _reportService;
     private readonly IControllerDetailService _controllerDetailService;
     private readonly IJunkFileScanner _junkFileScanner;
+
+    /// <summary>
+    /// A master list holding all files and folders for the currently inspected controller.
+    /// This list is used as a source for the filtered display list.
+    /// </summary>
     private readonly ObservableCollection<ContentItem> _masterControllerContent = new();
 
-    // --- Properties ---
+    //-------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------
+
+    /// <summary>
+    /// Gets or sets the root path of the workspace to be analyzed.
+    /// </summary>
     [ObservableProperty] private string _projectViewPath = @"C:\Users\lcvetic\Documents\Workspace";
+
+    /// <summary>
+    /// Gets or sets a collection of ProjectNode objects found in the workspace.
+    /// This is the main data source for the project TreeView.
+    /// </summary>
     [ObservableProperty] private ObservableCollection<ProjectNode> _prjNodes = new();
+
+    /// <summary>
+    /// Gets or sets a collection of file paths identified as junk files.
+    /// </summary>
     [ObservableProperty] private ObservableCollection<string> _junkFiles = new();
+
+    /// <summary>
+    /// Gets or sets the detailed information for the currently selected controller.
+    /// </summary>
     [ObservableProperty] private ControllerDetails? _selectedControllerDetails;
+
+    /// <summary>
+    /// Gets or sets the current user-selected sort order.
+    /// </summary>
     [ObservableProperty] private SortOrder _selectedSortOrder;
+
+    /// <summary>
+    /// A boolean flag derived from SelectedSortOrder. True for ascending, false for descending.
+    /// </summary>
     [ObservableProperty] private bool _sortAscending = true;
+
+    /// <summary>
+    /// Gets or sets the total number of projects found during the analysis.
+    /// </summary>
     [ObservableProperty] private int _projectNumber;
+
+    /// <summary>
+    /// Gets or sets the total number of controllers found across all projects.
+    /// </summary>
     [ObservableProperty] private int _controllerNumber;
+
+    /// <summary>
+    /// Gets or sets the total size of the analyzed workspace directory.
+    /// </summary>
     [ObservableProperty] private double _workspaceSize;
+
+    /// <summary>
+    /// A flag to indicate if the junk file scan is currently running.
+    /// </summary>
     [ObservableProperty] private bool _isScanning;
+
+    /// <summary>
+    /// Gets or sets the list of junk file patterns for the settings tab.
+    /// </summary>
     [ObservableProperty] private ObservableCollection<JunkFilePattern> _junkFilePatterns = new();
+
+    /// <summary>
+    /// Gets or sets the text used to filter the controller content list.
+    /// </summary>
     [ObservableProperty] private string _controllerContentFilter = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the filtered list of a controller's content to be displayed in the UI.
+    /// </summary>
     [ObservableProperty] private ObservableCollection<ContentItem> _displayedControllerContent = new();
 
-    // Properties for the Log Viewer
+    /// <summary>
+    /// Gets or sets the currently selected log section from the Log Viewer's dropdown.
+    /// </summary>
     [ObservableProperty] private LogSection? _selectedLogSection;
-    [ObservableProperty] private ObservableCollection<LogEntry> _selectedLogEntries = new();
 
+    /// <summary>
+    /// Gets or sets the list of log entries for the currently selected section.
+    /// This is the data source for the Log Viewer's DataGrid.
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<LogEntry> _selectedLogEntries = new();
 
     //-------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------
 
     /// <summary>
-    /// Initializes a new instance of the `MainViewModel` and instantiates the required services.
+    /// Initializes a new instance of the MainViewModel and its services.
     /// </summary>
     public MainViewModel()
     {
@@ -70,7 +138,7 @@ public partial class MainViewModel : ObservableObject
         _controllerDetailService = new ControllerDetailService();
         _junkFileScanner = new JunkFileScanner();
 
-        // Initialize the default junk file patterns
+        // Initialize the default junk file patterns for the settings tab.
         JunkFilePatterns.Add(new JunkFilePattern("mainbdf.mot", "Motion Definition File"));
         JunkFilePatterns.Add(new JunkFilePattern("mainbdf.ppe", "Project Parameter File"));
         JunkFilePatterns.Add(new JunkFilePattern("grafikbilderinfo.txt", "Graphics Info Text"));
@@ -89,12 +157,12 @@ public partial class MainViewModel : ObservableObject
     //-------------------------------------------------------------------------
 
     /// <summary>
-    /// Triggers the analysis based on the current ProjectViewPath.
+    /// Triggers the main analysis based on the ProjectViewPath.
     /// </summary>
     [RelayCommand]
     private void StartAnalysis()
     {
-        // Reset all relevant properties and collections for a clean run.
+        // Reset all relevant properties for a clean run.
         PrjNodes.Clear();
         JunkFiles.Clear();
         ProjectNumber = 0;
@@ -102,7 +170,6 @@ public partial class MainViewModel : ObservableObject
         SelectedControllerDetails = null;
         _currentlySelectedNode = null;
 
-        // Validate the input path.
         if (string.IsNullOrWhiteSpace(ProjectViewPath) || !Directory.Exists(ProjectViewPath))
         {
             MessageBox.Show("Die Quelldatei konnte unter folgendem Pfad nicht gefunden werden!", "Error",
@@ -110,48 +177,38 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        // Calculate the total size of the directory for percentage calculations later.
         WorkspaceSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
 
-        // --- Case 1: The path points directly to a single controller folder. ---
-        if (DiskAnalyzer.IsUstCategory(ProjectViewPath))
+        // --- Analysis Logic ---
+        if (DiskAnalyzer.IsUstCategory(ProjectViewPath)) // Case 1: Path is a single controller.
         {
             var ustSize = DiskAnalyzer.GetDiskSize(ProjectViewPath);
             var ustNode = new UstNode
             {
-                Path = ProjectViewPath,
-                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                Percentage = 100,
+                Path = ProjectViewPath, FormattedSize = DiskAnalyzer.FormatSize(ustSize), Percentage = 100,
                 TextColor = ColorProvider.GetUstCategoryColor(100)
             };
             ustNode.PropertyChanged += Node_PropertyChanged;
-
             var wrapperProjectNode = new ProjectNode
             {
-                Path = ProjectViewPath,
-                FormattedSize = DiskAnalyzer.FormatSize(ustSize),
-                TextColor = Brushes.Black,
+                Path = ProjectViewPath, FormattedSize = DiskAnalyzer.FormatSize(ustSize), TextColor = Brushes.Black,
                 Usts = [ustNode]
             };
             wrapperProjectNode.PropertyChanged += Node_PropertyChanged;
-
             PrjNodes.Add(wrapperProjectNode);
             ProjectNumber = 1;
             ControllerNumber = 1;
         }
-        // --- Case 2: The path points to a single project folder. ---
-        else if (DiskAnalyzer.IsProject(ProjectViewPath))
+        else if (DiskAnalyzer.IsProject(ProjectViewPath)) // Case 2: Path is a single project.
         {
             DisplayProjectAtPath(ProjectViewPath);
         }
-        // --- Case 3: The path is a workspace containing multiple projects. ---
-        else
+        else // Case 3: Path is a workspace with multiple projects.
         {
             var allPrjPaths = DiskAnalyzer.GetAllProjectPaths(ProjectViewPath);
             if (!allPrjPaths.Any())
             {
-                MessageBox.Show(
-                    "Kein gültiges Projekt (prj.xml) oder Controller (ust.xml) unter diesem Pfad gefunden!",
+                MessageBox.Show("Kein gültiges Projekt (prj.xml) oder Controller (ust.xml) unter diesem Pfad gefunden!",
                     "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -161,14 +218,13 @@ public partial class MainViewModel : ObservableObject
             var sortedProjects = SortAscending
                 ? projectSizes.OrderBy(p => p.Size)
                 : projectSizes.OrderByDescending(p => p.Size);
-
             foreach (var prj in sortedProjects)
             {
                 DisplayProjectAtPath(prj.Path);
             }
         }
 
-        // After the analysis is complete, save the results to a JSON report file.
+        // Save results to a report file.
         try
         {
             _reportService.SaveAnalysisResults(PrjNodes, ProjectViewPath);
@@ -201,7 +257,6 @@ public partial class MainViewModel : ObservableObject
     /// <summary>
     /// Opens the selected project's folder in Windows Explorer.
     /// </summary>
-    /// <param name="prjNode">The ProjectNode whose folder should be opened.</param>
     [RelayCommand]
     private void OpenProjectFolder(ProjectNode prjNode)
     {
@@ -214,7 +269,6 @@ public partial class MainViewModel : ObservableObject
     /// <summary>
     /// Opens the selected controller's folder in Windows Explorer.
     /// </summary>
-    /// <param name="ustNode">The UstNode whose folder should be opened.</param>
     [RelayCommand]
     private void OpenUstFolder(UstNode ustNode)
     {
@@ -228,7 +282,6 @@ public partial class MainViewModel : ObservableObject
     /// <summary>
     /// Copies the path of a given node to the clipboard.
     /// </summary>
-    /// <param name="node">The node whose path should be copied.</param>
     [RelayCommand]
     private void CopyPath(NodeBase? node)
     {
@@ -246,6 +299,9 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Scans the folder of a given controller and populates the content view panel.
+    /// </summary>
     [RelayCommand]
     private void ShowControllerContent(UstNode? ustNode)
     {
@@ -254,7 +310,7 @@ public partial class MainViewModel : ObservableObject
 
         if (ustNode == null || !Directory.Exists(ustNode.Path))
         {
-            FilterControllerContent();
+            FilterControllerContent(); // Clears the displayed list
             return;
         }
 
@@ -262,17 +318,10 @@ public partial class MainViewModel : ObservableObject
         {
             // Get all directories and files recursively
             var allEntries = Directory.EnumerateFileSystemEntries(ustNode.Path, "*", SearchOption.AllDirectories);
-
             foreach (var fullPath in allEntries)
             {
-                // Get the path relative to the controller folder for display purposes only
                 string relativePath = Path.GetRelativePath(ustNode.Path, fullPath);
-
-                // Check if the entry is a directory to add the correct icon
-                bool isDirectory = Directory.Exists(fullPath);
-                string icon = isDirectory ? "📁" : "📄";
-
-                // Store both the friendly display name and the absolute full path
+                string icon = Directory.Exists(fullPath) ? "📁" : "📄";
                 _masterControllerContent.Add(new ContentItem($"{icon} {relativePath}", fullPath));
             }
         }
@@ -285,15 +334,17 @@ public partial class MainViewModel : ObservableObject
         FilterControllerContent();
     }
 
+    /// <summary>
+    /// Opens a selected file or folder from the content viewer panel.
+    /// </summary>
     [RelayCommand]
-    private void OpenContentFile(ContentItem? selectedItem) // The parameter is now a ContentItem
+    private void OpenContentFile(ContentItem? selectedItem)
     {
         if (selectedItem == null) return;
 
         try
         {
-            // We no longer need to build the path. We use the absolute FullPath directly.
-            // This is why this version is much more reliable.
+            // The ContentItem model stores the absolute path, so we can open it directly.
             if (File.Exists(selectedItem.FullPath) || Directory.Exists(selectedItem.FullPath))
             {
                 Process.Start(new ProcessStartInfo(selectedItem.FullPath) { UseShellExecute = true });
@@ -311,9 +362,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-
     /// <summary>
-    /// Scans the workspace directory for temporary or junk files asynchronously.
+    /// Scans the workspace directory for junk files asynchronously.
     /// </summary>
     [RelayCommand]
     private async Task ScanForJunkFilesAsync()
@@ -376,11 +426,7 @@ public partial class MainViewModel : ObservableObject
             {
                 try
                 {
-                    if (File.Exists(filePath))
-                    {
-                        File.Delete(filePath);
-                    }
-
+                    if (File.Exists(filePath)) File.Delete(filePath);
                     successfullyDeletedFiles.Add(filePath);
                 }
                 catch (Exception ex)
@@ -416,16 +462,12 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Opens the source Log.xml file for a given event using the default system application.
+    /// Opens the source Log.xml file for a given event.
     /// </summary>
-    /// <param name="logEvent">The event whose source file should be opened.</param>
     [RelayCommand]
     private void OpenLogFile(LogEvent? logEvent)
     {
-        if (logEvent == null || string.IsNullOrWhiteSpace(logEvent.SourceFilePath))
-        {
-            return;
-        }
+        if (logEvent == null || string.IsNullOrWhiteSpace(logEvent.SourceFilePath)) return;
 
         if (!File.Exists(logEvent.SourceFilePath))
         {
@@ -436,11 +478,7 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            var psi = new ProcessStartInfo(logEvent.SourceFilePath)
-            {
-                UseShellExecute = true
-            };
-            Process.Start(psi);
+            Process.Start(new ProcessStartInfo(logEvent.SourceFilePath) { UseShellExecute = true });
         }
         catch (Exception ex)
         {
@@ -450,41 +488,45 @@ public partial class MainViewModel : ObservableObject
     }
 
     //-------------------------------------------------------------------------
-    // Partial On...Changed Methods
+    // Partial On...Changed Methods (Auto-generated by CommunityToolkit.Mvvm)
     //-------------------------------------------------------------------------
 
     /// <summary>
-    /// This method is automatically called by the CommunityToolkit.Mvvm source generator
-    /// whenever the `SelectedSortOrder` property changes.
+    /// Fires when the user changes the sort order, triggering a new analysis.
     /// </summary>
-    /// <param name="value">The new value of the `SelectedSortOrder` property.</param>
     partial void OnSelectedSortOrderChanged(SortOrder value)
     {
         SortAscending = value == SortOrder.KleinsteZuerst;
-
         if (StartAnalysisCommand.CanExecute(null))
         {
             StartAnalysisCommand.Execute(null);
         }
     }
 
+    /// <summary>
+    /// Fires when the user types in the content filter TextBox, updating the displayed list.
+    /// </summary>
     partial void OnControllerContentFilterChanged(string value)
     {
         FilterControllerContent();
     }
 
+    /// <summary>
+    /// Fires when a new controller is selected, updating the Log Viewer.
+    /// </summary>
     partial void OnSelectedControllerDetailsChanged(ControllerDetails? value)
     {
         SelectedLogSection = null;
         SelectedLogEntries.Clear();
-
         if (value?.StructuredLog.Any() == true)
         {
             SelectedLogSection = value.StructuredLog.First();
         }
     }
 
-    // This method runs every time the user selects a new item from the dropdown
+    /// <summary>
+    /// Fires when the user selects a new section in the Log Viewer's dropdown.
+    /// </summary>
     partial void OnSelectedLogSectionChanged(LogSection? value)
     {
         SelectedLogEntries.Clear();
@@ -497,10 +539,13 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    //-------------------------------------------------------------------------
+    // Private Helper Methods
+    //-------------------------------------------------------------------------
 
-
-    // --- Private Helper Methods ---
-
+    /// <summary>
+    /// Filters the master content list based on the ControllerContentFilter text.
+    /// </summary>
     private void FilterControllerContent()
     {
         DisplayedControllerContent.Clear();
@@ -517,9 +562,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Analyzes a single project directory, creates a `ProjectNode`, and populates it with its child `UstNode` controllers.
+    /// Analyzes a single project directory and adds its node to the TreeView.
     /// </summary>
-    /// <param name="path">The full path to the project directory.</param>
     private void DisplayProjectAtPath(string path)
     {
         var projectSize = DiskAnalyzer.GetDiskSize(path);
@@ -527,7 +571,6 @@ public partial class MainViewModel : ObservableObject
 
         var allUsts = DiskAnalyzer.GetAllUstPathsUnderSubtree(path);
         var filteredUsts = allUsts.Where(p => p.StartsWith(path, StringComparison.OrdinalIgnoreCase));
-
         var sortedUsts = SortAscending
             ? filteredUsts.OrderBy(DiskAnalyzer.GetDiskSize)
             : filteredUsts.OrderByDescending(DiskAnalyzer.GetDiskSize);
@@ -536,8 +579,7 @@ public partial class MainViewModel : ObservableObject
         {
             Path = path,
             FormattedSize = DiskAnalyzer.FormatSize(projectSize),
-            TextColor = ColorProvider.GetProjectCategoryColor(
-                DiskAnalyzer.GetPercentage(projectSize, WorkspaceSize)),
+            TextColor = ColorProvider.GetProjectCategoryColor(DiskAnalyzer.GetPercentage(projectSize, WorkspaceSize)),
             Usts = sortedUsts.Select(ustPath =>
             {
                 var ustSize = DiskAnalyzer.GetDiskSize(ustPath);
@@ -559,18 +601,15 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Event handler for the `PropertyChanged` event on `ProjectNode` and `UstNode` objects.
-    /// It primarily handles changes to the `IsSelected` property to manage UI selection.
+    /// Handles the selection logic for items in the TreeView.
     /// </summary>
     private void Node_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(NodeBase.IsSelected))
-        {
-            return;
-        }
+        if (e.PropertyName != nameof(NodeBase.IsSelected)) return;
 
         if (sender is NodeBase { IsSelected: true } newlySelectedNode)
         {
+            // Enforce single selection
             if (_currentlySelectedNode != null && _currentlySelectedNode != newlySelectedNode)
             {
                 _currentlySelectedNode.IsSelected = false;
@@ -578,17 +617,29 @@ public partial class MainViewModel : ObservableObject
 
             _currentlySelectedNode = newlySelectedNode;
 
-            if (newlySelectedNode is UstNode ustNode)
+            // --- Main selection logic ---
+            if (newlySelectedNode is ProjectNode projectNode) // If a Project is clicked...
             {
+                // ...drill down by re-running the analysis on its path.
+                ProjectViewPath = projectNode.Path;
+                if (StartAnalysisCommand.CanExecute(null))
+                {
+                    StartAnalysisCommand.Execute(null);
+                }
+            }
+            else if (newlySelectedNode is UstNode ustNode) // If a Controller is clicked...
+            {
+                // ...update the path, load its details, and scan for junk files.
+                ProjectViewPath = ustNode.Path;
                 _ = LoadControllerDetailsAsync(ustNode.Path);
+                _ = ScanForJunkFilesAsync();
             }
         }
     }
 
     /// <summary>
-    /// Asynchronously loads detailed information for a given controller path and updates the `SelectedControllerDetails` property.
+    /// Asynchronously loads detailed information for a given controller.
     /// </summary>
-    /// <param name="ustPath">The path to the controller's "ust.xml" folder.</param>
     private async Task LoadControllerDetailsAsync(string ustPath)
     {
         try
